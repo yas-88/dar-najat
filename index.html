@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dar Najat — In memory of Najat Ihsane</title>
+<meta name="description" content="Dar Najat is a house built in memory of Najat Ihsane. Feed someone who is hungry, in her name.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --plaster: #F0E9DC;
+    --plaster-deep: #E6DCCB;
+    --green: #163A30;
+    --green-soft: #1F4A3F;
+    --ink: #241F18;
+    --brass: #B5853C;
+    --brass-light: #D9AE63;
+    --indigo: #2C3566;
+    --line: rgba(36, 31, 24, 0.14);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--plaster);
+    color: var(--ink);
+    font-family: "Mulish", system-ui, sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    background: var(--green);
+    color: var(--plaster);
+    padding: 88px 0 96px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .star {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 32px;
+    display: block;
+    color: var(--brass-light);
+  }
+
+  .eyebrow {
+    font-family: "Amiri", serif;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--brass-light);
+    margin: 0 0 28px;
+  }
+  .eyebrow .latin {
+    display: block;
+    font-family: "Mulish", sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(240, 233, 220, 0.62);
+    margin-top: 8px;
+  }
+
+  .name-ar {
+    font-family: "Amiri", serif;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 0 0 10px;
+    color: var(--plaster);
+  }
+  .name {
+    font-family: "Amiri", serif;
+    font-size: clamp(40px, 9vw, 68px);
+    font-weight: 700;
+    line-height: 1.04;
+    margin: 0;
+    color: var(--plaster);
+  }
+
+  .dates {
+    font-family: "Mulish", sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(240, 233, 220, 0.66);
+    margin: 24px 0 0;
+  }
+
+  .thesis {
+    font-family: "Amiri", serif;
+    font-style: italic;
+    font-size: clamp(20px, 4vw, 25px);
+    line-height: 1.5;
+    color: var(--plaster);
+    max-width: 30ch;
+    margin: 40px auto 0;
+  }
+  .thesis b { font-style: normal; font-weight: 700; color: var(--brass-light); }
+
+  /* ---------- Sections ---------- */
+  section { padding: 72px 0; }
+
+  .label {
+    font-family: "Mulish", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin: 0 0 20px;
+  }
+
+  h2 {
+    font-family: "Amiri", serif;
+    font-weight: 700;
+    font-size: clamp(26px, 5vw, 34px);
+    line-height: 1.2;
+    margin: 0 0 18px;
+    color: var(--green-soft);
+  }
+
+  p { margin: 0 0 18px; }
+  p:last-child { margin-bottom: 0; }
+
+  .lede { font-size: 20px; }
+
+  /* Two anchor dates */
+  .days { border-top: 1px solid var(--line); margin-top: 8px; }
+  .day {
+    display: flex;
+    gap: 24px;
+    align-items: baseline;
+    padding: 26px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .day-date {
+    font-family: "Amiri", serif;
+    font-size: 23px;
+    font-weight: 700;
+    color: var(--green-soft);
+    flex: 0 0 132px;
+  }
+  .day-date span {
+    display: block;
+    font-family: "Mulish", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-top: 4px;
+  }
+  .day-note { margin: 0; color: var(--ink); }
+
+  /* Her story — owner's words */
+  .story {
+    background: var(--plaster-deep);
+    border-left: 3px solid var(--brass);
+    padding: 28px 28px;
+    border-radius: 2px;
+  }
+  .story .name-line {
+    font-family: "Mulish", sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin: 18px 0 0;
+  }
+  .story p { font-family: "Amiri", serif; font-size: 21px; font-style: italic; line-height: 1.6; }
+
+  /* CTA */
+  .cta-band { background: var(--green); color: var(--plaster); text-align: center; }
+  .cta-band h2 { color: var(--plaster); }
+  .cta-band p { color: rgba(240, 233, 220, 0.78); max-width: 42ch; margin-left: auto; margin-right: auto; }
+  .btn {
+    display: inline-block;
+    margin-top: 28px;
+    background: var(--brass);
+    color: #1a1208;
+    font-family: "Mulish", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    padding: 16px 34px;
+    border-radius: 2px;
+    transition: background 0.18s ease;
+  }
+  .btn:hover { background: var(--brass-light); }
+  .btn:focus-visible { outline: 3px solid var(--plaster); outline-offset: 3px; }
+
+  /* Footer */
+  footer {
+    background: var(--green);
+    color: rgba(240, 233, 220, 0.7);
+    text-align: center;
+    padding: 48px 0 56px;
+    border-top: 1px solid rgba(217, 174, 99, 0.22);
+  }
+  footer .star { width: 30px; height: 30px; margin-bottom: 20px; color: var(--brass-light); }
+  footer p { font-size: 14px; margin: 0 0 6px; }
+  footer .ar { font-family: "Amiri", serif; font-size: 18px; color: var(--brass-light); }
+
+  a { color: var(--brass); }
+
+  /* Reveal animation */
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  @media (max-width: 540px) {
+    .day { flex-direction: column; gap: 6px; }
+    .day-date { flex-basis: auto; }
+    section { padding: 56px 0; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="wrap">
+      <svg class="star reveal" viewBox="0 0 100 100" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3">
+        <rect x="22" y="22" width="56" height="56"/>
+        <rect x="22" y="22" width="56" height="56" transform="rotate(45 50 50)"/>
+      </svg>
+      <p class="eyebrow reveal">دار نجاة<span class="latin">Dar Najat</span></p>
+      <p class="name-ar reveal">نجاة إحسان</p>
+      <h1 class="name reveal">Najat Ihsane</h1>
+      <p class="dates reveal">14 October 1958 &ndash; 28 June 2024</p>
+      <p class="thesis reveal">Her name means <b>deliverance</b>. Dar Najat is the house built in it, a place to feed someone who has none.</p>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <div class="wrap">
+        <p class="label reveal">Why this exists</p>
+        <h2 class="reveal">A meal given in her memory.</h2>
+        <p class="lede reveal">Najat raised a family on the belief that no one at your door leaves hungry. Dar Najat carries that forward. You run a feeding for people without a home, you do it in her name, and you log it so the next person knows that corner was cared for.</p>
+        <p class="reveal">It is built to be carried by many hands, not one. The records belong to everyone who shows up, so the work lives on long after any single person steps back.</p>
+      </div>
+    </section>
+
+    <section style="padding-top:0;">
+      <div class="wrap">
+        <p class="label reveal">Two days carry her name</p>
+        <div class="days reveal">
+          <div class="day">
+            <div class="day-date">14 October<span>Her birthday</span></div>
+            <p class="day-note">The day she was born. Mark it by feeding someone, the way she would have fed you.</p>
+          </div>
+          <div class="day">
+            <div class="day-date">28 June<span>The day she left</span></div>
+            <p class="day-note">The day she passed. A meal given on this day turns grief into something that fills a stomach.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-top:0;">
+      <div class="wrap">
+        <p class="label reveal">Her words, her people</p>
+        <div class="story reveal">
+          <p>[Yassir, your words about your mother belong here. Who she was, how she fed people, what you want a stranger to know about her before they feed someone in her name. I will not write this for you.]</p>
+          <p class="name-line">— add attribution if you wish</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="wrap">
+        <h2 class="reveal">Feed someone in her name.</h2>
+        <p class="reveal">A short playbook walks you through it: where to go, what to bring, how to serve with dignity. Then you log the feeding so others know the spot is covered.</p>
+        <a class="btn reveal" href="playbook.html">Run a feeding</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <svg class="star" viewBox="0 0 100 100" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="4">
+      <rect x="22" y="22" width="56" height="56"/>
+      <rect x="22" y="22" width="56" height="56" transform="rotate(45 50 50)"/>
+    </svg>
+    <p class="ar">دار نجاة</p>
+    <p>Built in memory of Najat Ihsane.</p>
+    <p>Meant to be carried by many hands.</p>
+  </footer>
+
+  <script>
+    (function () {
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var items = document.querySelectorAll(".reveal");
+      if (reduce || !("IntersectionObserver" in window)) {
+        items.forEach(function (el) { el.classList.add("in"); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.12 });
+      items.forEach(function (el) { io.observe(el); });
+    })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log a feeding — Dar Najat</title>
+<meta name="description" content="Record a feeding so others know the spot is covered, and Najat's name stays on the work.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --plaster: #F0E9DC;
+    --plaster-deep: #E6DCCB;
+    --green: #163A30;
+    --green-soft: #1F4A3F;
+    --ink: #241F18;
+    --brass: #B5853C;
+    --brass-light: #D9AE63;
+    --indigo: #2C3566;
+    --line: rgba(36, 31, 24, 0.14);
+    --field: #FBF7EF;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--plaster);
+    color: var(--ink);
+    font-family: "Mulish", system-ui, sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+  .topbar { background: var(--green); }
+  .topbar .wrap { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; }
+  .back { font-family: "Mulish", sans-serif; font-size: 13px; letter-spacing: 0.06em; color: rgba(240,233,220,0.72); text-decoration: none; }
+  .back:hover { color: var(--brass-light); }
+  .topbar .ar { font-family: "Amiri", serif; color: var(--brass-light); font-size: 18px; }
+
+  .hero { background: var(--green); color: var(--plaster); padding: 24px 0 56px; text-align: center; }
+  .star { width: 40px; height: 40px; margin: 0 auto 20px; display: block; color: var(--brass-light); }
+  .eyebrow { font-family: "Mulish", sans-serif; font-size: 12px; letter-spacing: 0.32em; text-transform: uppercase; color: rgba(240,233,220,0.6); margin: 0 0 12px; }
+  .hero h1 { font-family: "Amiri", serif; font-weight: 700; font-size: clamp(30px, 6vw, 46px); line-height: 1.1; margin: 0 0 16px; }
+  .hero p { color: rgba(240,233,220,0.82); max-width: 38ch; margin: 0 auto; }
+
+  main { padding: 44px 0 0; }
+
+  /* Banner */
+  .banner { border-radius: 3px; padding: 14px 18px; font-size: 15px; margin-bottom: 26px; }
+  .banner.demo { background: #FBEFD6; border: 1px solid #E3C583; color: #6B4E1E; }
+  .banner.ok { background: #E2EFE4; border: 1px solid #9FC6A6; color: #1F4A3F; }
+  .banner.err { background: #F5E0D8; border: 1px solid #D5A48E; color: #7A3A24; }
+  .banner.hide { display: none; }
+
+  /* Form */
+  .card { background: var(--plaster-deep); border-radius: 4px; padding: 28px; }
+  .card h2 { font-family: "Amiri", serif; font-weight: 700; font-size: 24px; color: var(--green-soft); margin: 0 0 4px; }
+  .card .sub { font-size: 15px; color: rgba(36,31,24,0.66); margin: 0 0 24px; }
+
+  .field { margin-bottom: 20px; }
+  .field label { display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; color: var(--green-soft); margin-bottom: 7px; }
+  .field .hint { font-weight: 400; color: rgba(36,31,24,0.5); letter-spacing: 0; }
+  input[type="text"], input[type="date"], input[type="number"], textarea {
+    width: 100%;
+    font-family: "Mulish", sans-serif;
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--field);
+    border: 1px solid rgba(36,31,24,0.2);
+    border-radius: 3px;
+    padding: 12px 14px;
+  }
+  textarea { resize: vertical; min-height: 76px; }
+  input:focus, textarea:focus { outline: none; border-color: var(--brass); box-shadow: 0 0 0 3px rgba(181,133,60,0.18); }
+
+  .row { display: flex; gap: 14px; }
+  .row .field { flex: 1; }
+  .row .field.state { flex: 0 0 96px; }
+
+  .checks { display: flex; flex-wrap: wrap; gap: 10px; }
+  .check {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--field);
+    border: 1px solid rgba(36,31,24,0.2);
+    border-radius: 999px;
+    padding: 9px 16px;
+    cursor: pointer;
+    font-size: 15px;
+    user-select: none;
+  }
+  .check input { accent-color: var(--green-soft); width: 16px; height: 16px; }
+  .check.on { border-color: var(--brass); background: #FBEFD6; }
+
+  /* Honeypot, hidden from people, visible to bots */
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  .submit {
+    width: 100%;
+    margin-top: 6px;
+    background: var(--brass);
+    color: #1a1208;
+    font-family: "Mulish", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    border: none;
+    border-radius: 3px;
+    padding: 16px;
+    cursor: pointer;
+    transition: background 0.18s ease;
+  }
+  .submit:hover { background: var(--brass-light); }
+  .submit:focus-visible { outline: 3px solid var(--green-soft); outline-offset: 2px; }
+  .submit:disabled { opacity: 0.55; cursor: default; }
+
+  /* Coverage */
+  .coverage { padding: 56px 0 0; }
+  .coverage h2 { font-family: "Amiri", serif; font-weight: 700; font-size: 26px; color: var(--green-soft); margin: 0 0 4px; }
+  .coverage .sub { font-size: 15px; color: rgba(36,31,24,0.6); margin: 0 0 22px; }
+
+  .feeding { padding: 20px 0; border-bottom: 1px solid var(--line); }
+  .feeding:first-of-type { border-top: 1px solid var(--line); }
+  .f-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .f-where { font-family: "Amiri", serif; font-weight: 700; font-size: 20px; color: var(--green-soft); margin: 0; }
+  .f-date { font-size: 13px; letter-spacing: 0.04em; color: var(--brass); white-space: nowrap; }
+  .f-memory { font-size: 14px; color: rgba(36,31,24,0.66); margin: 4px 0 0; }
+  .f-memory b { color: var(--ink); font-weight: 700; }
+  .f-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+  .tag { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: var(--green-soft); background: var(--plaster-deep); border-radius: 999px; padding: 4px 12px; }
+  .f-note { font-family: "Amiri", serif; font-style: italic; font-size: 17px; color: var(--ink); margin: 12px 0 0; }
+  .f-count { font-size: 13px; color: rgba(36,31,24,0.55); margin-top: 8px; }
+  .empty { color: rgba(36,31,24,0.55); font-style: italic; padding: 8px 0; }
+
+  footer { background: var(--green); color: rgba(240,233,220,0.62); text-align: center; padding: 40px 0 52px; margin-top: 64px; border-top: 1px solid rgba(217,174,99,0.22); }
+  footer p { font-size: 13px; margin: 0 0 6px; }
+  footer .ar { font-family: "Amiri", serif; font-size: 17px; color: var(--brass-light); margin-bottom: 14px; }
+
+  a { color: var(--brass); }
+
+  @media (max-width: 540px) {
+    .row { flex-direction: column; gap: 0; }
+    .row .field.state { flex-basis: auto; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="wrap">
+      <a class="back" href="playbook.html">← The playbook</a>
+      <span class="ar">دار نجاة</span>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="wrap">
+      <svg class="star" viewBox="0 0 100 100" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3">
+        <rect x="22" y="22" width="56" height="56"/>
+        <rect x="22" y="22" width="56" height="56" transform="rotate(45 50 50)"/>
+      </svg>
+      <p class="eyebrow">Log a feeding</p>
+      <h1>Mark what you gave</h1>
+      <p>A minute of recording keeps the house standing. Nothing here names the people you served.</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+
+      <div id="banner" class="banner hide"></div>
+
+      <div class="card">
+        <h2>The details</h2>
+        <p class="sub">Only the date, a rough location, and at least one item are required.</p>
+
+        <form id="form" novalidate>
+          <div class="field">
+            <label for="feeding_date">Date of the feeding</label>
+            <input type="date" id="feeding_date" name="feeding_date" required>
+          </div>
+
+          <div class="field">
+            <label for="location_label">Where <span class="hint">— a block, park, or intersection. Keep it rough, never where someone sleeps.</span></label>
+            <input type="text" id="location_label" name="location_label" maxlength="200" placeholder="e.g. Echo Park lake path" required>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="city">City <span class="hint">(optional)</span></label>
+              <input type="text" id="city" name="city" maxlength="100" placeholder="Los Angeles">
+            </div>
+            <div class="field state">
+              <label for="state">State <span class="hint">(optional)</span></label>
+              <input type="text" id="state" name="state" maxlength="2" placeholder="CA">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="in_memory_of">In memory of</label>
+            <input type="text" id="in_memory_of" name="in_memory_of" maxlength="120" value="Najat Ihsane">
+          </div>
+
+          <div class="field">
+            <label>What you gave <span class="hint">— pick at least one</span></label>
+            <div class="checks" id="checks">
+              <label class="check"><input type="checkbox" name="items" value="Meals"> Meals</label>
+              <label class="check"><input type="checkbox" name="items" value="Water"> Water</label>
+              <label class="check"><input type="checkbox" name="items" value="Hygiene kits"> Hygiene kits</label>
+              <label class="check"><input type="checkbox" name="items" value="Socks"> Socks</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="people_count">About how many people <span class="hint">(optional)</span></label>
+            <input type="number" id="people_count" name="people_count" min="0" max="100000" placeholder="e.g. 12">
+          </div>
+
+          <div class="field">
+            <label for="note">A note <span class="hint">(optional, public). What happened, who you met. No last names.</span></label>
+            <textarea id="note" name="note" maxlength="500" placeholder="Met a man named Earl near the bridge. Gave him socks and a hot meal."></textarea>
+          </div>
+
+          <div class="hp" aria-hidden="true">
+            <label>Leave this blank<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+          </div>
+
+          <button type="submit" class="submit" id="submit">Log this feeding</button>
+        </form>
+      </div>
+
+      <section class="coverage">
+        <h2>Recent feedings</h2>
+        <p class="sub">Every entry is a corner someone cared for, in a name worth remembering.</p>
+        <div id="list"><p class="empty">Loading…</p></div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    <p class="ar">دار نجاة</p>
+    <p>Built in memory of Najat Ihsane.</p>
+    <p>Meant to be carried by many hands.</p>
+  </footer>
+
+  <script>
+  (function () {
+    // ---------------------------------------------------------------
+    // CONFIG — paste your two values from Supabase here, then redeploy.
+    // Project Settings > API. Use the "anon" "public" key, not service_role.
+    // Safe to ship publicly ONLY because setup.sql turned on Row Level Security.
+    // ---------------------------------------------------------------
+    var SUPABASE_URL = "";        // e.g. https://abcd1234.supabase.co
+    var SUPABASE_ANON_KEY = "";   // the anon public key
+
+    var LIVE = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+    var client = null;
+    if (LIVE && window.supabase && window.supabase.createClient) {
+      client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    var banner = document.getElementById("banner");
+    var form = document.getElementById("form");
+    var submitBtn = document.getElementById("submit");
+    var listEl = document.getElementById("list");
+
+    // Default the date to today, in local time.
+    var now = new Date();
+    document.getElementById("feeding_date").value =
+      now.getFullYear() + "-" +
+      String(now.getMonth() + 1).padStart(2, "0") + "-" +
+      String(now.getDate()).padStart(2, "0");
+
+    // Checkbox pill styling
+    document.getElementById("checks").addEventListener("change", function (e) {
+      var label = e.target.closest(".check");
+      if (label) label.classList.toggle("on", e.target.checked);
+    });
+
+    function showBanner(kind, msg) {
+      banner.className = "banner " + kind;
+      banner.textContent = msg;
+    }
+
+    if (!LIVE) {
+      showBanner("demo", "Demo mode. Add your Supabase URL and anon key to the CONFIG block in this file to go live. Entries below are samples and are not saved.");
+    } else if (!client) {
+      showBanner("err", "Couldn't reach the database library. Check your connection and reload.");
+    }
+
+    // Sample data for demo mode so the page is real to look at.
+    var demo = [
+      { feeding_date: "2026-06-28", location_label: "MacArthur Park, west side", city: "Los Angeles", state: "CA", in_memory_of: "Najat Ihsane", items: ["Meals", "Water", "Socks"], people_count: 18, note: "First feeding on her day. Eighteen plates, every one given with her name said out loud." },
+      { feeding_date: "2026-06-21", location_label: "Under the 5th St bridge", city: "Austin", state: "TX", in_memory_of: "Frank DeLuca", items: ["Hygiene kits", "Water"], people_count: 9, note: "Met a man named Earl. He asked us to come back Thursdays." },
+      { feeding_date: "2026-06-14", location_label: "Pioneer Courthouse Square", city: "Portland", state: "OR", in_memory_of: "Najat Ihsane", items: ["Meals", "Socks"], people_count: 24, note: "" }
+    ];
+
+    function fmtDate(s) {
+      if (!s) return "";
+      var p = String(s).split("-");
+      if (p.length !== 3) return s;
+      var d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+      return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+    }
+
+    // Build each card with DOM methods so user text can never inject markup.
+    function renderList(rows) {
+      listEl.innerHTML = "";
+      if (!rows || !rows.length) {
+        var e = document.createElement("p");
+        e.className = "empty";
+        e.textContent = "No feedings logged yet. Yours can be the first.";
+        listEl.appendChild(e);
+        return;
+      }
+      rows.forEach(function (r) {
+        var card = document.createElement("div");
+        card.className = "feeding";
+
+        var top = document.createElement("div");
+        top.className = "f-top";
+        var where = document.createElement("p");
+        where.className = "f-where";
+        var place = r.location_label || "Somewhere";
+        if (r.city) place += ", " + r.city;
+        if (r.state) place += ", " + r.state;
+        where.textContent = place;
+        var date = document.createElement("span");
+        date.className = "f-date";
+        date.textContent = fmtDate(r.feeding_date);
+        top.appendChild(where);
+        top.appendChild(date);
+        card.appendChild(top);
+
+        if (r.in_memory_of) {
+          var mem = document.createElement("p");
+          mem.className = "f-memory";
+          mem.appendChild(document.createTextNode("In memory of "));
+          var b = document.createElement("b");
+          b.textContent = r.in_memory_of;
+          mem.appendChild(b);
+          card.appendChild(mem);
+        }
+
+        if (r.items && r.items.length) {
+          var tags = document.createElement("div");
+          tags.className = "f-tags";
+          r.items.forEach(function (it) {
+            var t = document.createElement("span");
+            t.className = "tag";
+            t.textContent = it;
+            tags.appendChild(t);
+          });
+          card.appendChild(tags);
+        }
+
+        if (r.people_count || r.people_count === 0) {
+          var c = document.createElement("p");
+          c.className = "f-count";
+          c.textContent = "About " + r.people_count + " people";
+          card.appendChild(c);
+        }
+
+        if (r.note) {
+          var n = document.createElement("p");
+          n.className = "f-note";
+          n.textContent = "\u201C" + r.note + "\u201D";
+          card.appendChild(n);
+        }
+
+        listEl.appendChild(card);
+      });
+    }
+
+    async function loadList() {
+      if (!LIVE || !client) { renderList(demo); return; }
+      try {
+        var res = await client
+          .from("feedings")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(50);
+        if (res.error) throw res.error;
+        renderList(res.data);
+      } catch (err) {
+        showBanner("err", "Couldn't load the coverage list. " + (err.message || ""));
+        renderList([]);
+      }
+    }
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      // Honeypot: a real person never fills this.
+      if (form.website.value) return;
+
+      var items = Array.prototype.slice
+        .call(form.querySelectorAll('input[name="items"]:checked'))
+        .map(function (i) { return i.value; });
+
+      var location = form.location_label.value.trim();
+      if (!form.feeding_date.value || !location) {
+        showBanner("err", "A date and a location are needed.");
+        return;
+      }
+      if (!items.length) {
+        showBanner("err", "Pick at least one thing you gave.");
+        return;
+      }
+
+      var payload = {
+        feeding_date: form.feeding_date.value,
+        location_label: location,
+        city: form.city.value.trim() || null,
+        state: form.state.value.trim().toUpperCase() || null,
+        in_memory_of: form.in_memory_of.value.trim() || "Najat Ihsane",
+        items: items,
+        people_count: form.people_count.value ? parseInt(form.people_count.value, 10) : null,
+        note: form.note.value.trim() || null
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Saving…";
+
+      if (!LIVE || !client) {
+        demo.unshift(payload);
+        renderList(demo);
+        showBanner("demo", "Saved in demo mode only. Add your Supabase keys to record real feedings.");
+      } else {
+        try {
+          var res = await client.from("feedings").insert([payload]);
+          if (res.error) throw res.error;
+          showBanner("ok", "Logged. Thank you for feeding someone in their name.");
+          await loadList();
+        } catch (err) {
+          showBanner("err", "Couldn't save. " + (err.message || "Try again."));
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Log this feeding";
+          return;
+        }
+      }
+
+      // Reset for the next entry, keep the date and the dedication.
+      form.location_label.value = "";
+      form.city.value = "";
+      form.state.value = "";
+      form.people_count.value = "";
+      form.note.value = "";
+      Array.prototype.slice.call(form.querySelectorAll('input[name="items"]')).forEach(function (i) {
+        i.checked = false;
+        var l = i.closest(".check"); if (l) l.classList.remove("on");
+      });
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Log this feeding";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    loadList();
+  })();
+  </script>
+
+</body>
+</html>

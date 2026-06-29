@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Playbook — Dar Najat</title>
+<meta name="description" content="How to run a feeding for people without a home: what to bring, how to keep food safe, how to serve with dignity, and how to log it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --plaster: #F0E9DC;
+    --plaster-deep: #E6DCCB;
+    --green: #163A30;
+    --green-soft: #1F4A3F;
+    --ink: #241F18;
+    --brass: #B5853C;
+    --brass-light: #D9AE63;
+    --indigo: #2C3566;
+    --line: rgba(36, 31, 24, 0.14);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--plaster);
+    color: var(--ink);
+    font-family: "Mulish", system-ui, sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+  /* Top bar */
+  .topbar { background: var(--green); }
+  .topbar .wrap { display: flex; align-items: center; justify-content: space-between; padding-top: 18px; padding-bottom: 18px; }
+  .back {
+    font-family: "Mulish", sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: rgba(240, 233, 220, 0.72);
+    text-decoration: none;
+  }
+  .back:hover { color: var(--brass-light); }
+  .topbar .ar { font-family: "Amiri", serif; color: var(--brass-light); font-size: 18px; }
+
+  /* Hero */
+  .hero {
+    background: var(--green);
+    color: var(--plaster);
+    padding: 28px 0 64px;
+    text-align: center;
+  }
+  .star { width: 44px; height: 44px; margin: 0 auto 24px; display: block; color: var(--brass-light); }
+  .eyebrow {
+    font-family: "Mulish", sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(240, 233, 220, 0.6);
+    margin: 0 0 14px;
+  }
+  .hero h1 {
+    font-family: "Amiri", serif;
+    font-weight: 700;
+    font-size: clamp(32px, 7vw, 52px);
+    line-height: 1.08;
+    margin: 0 0 18px;
+  }
+  .hero p { color: rgba(240, 233, 220, 0.82); max-width: 40ch; margin: 0 auto; }
+
+  /* Steps */
+  main { padding: 8px 0 0; }
+  .step { padding: 52px 0; border-bottom: 1px solid var(--line); }
+  .step:last-of-type { border-bottom: none; }
+
+  .step-head { display: flex; align-items: baseline; gap: 18px; margin-bottom: 18px; }
+  .num {
+    font-family: "Amiri", serif;
+    font-weight: 700;
+    font-size: 34px;
+    line-height: 1;
+    color: var(--brass);
+    flex: 0 0 auto;
+  }
+  h2 {
+    font-family: "Amiri", serif;
+    font-weight: 700;
+    font-size: clamp(24px, 5vw, 30px);
+    line-height: 1.15;
+    margin: 0;
+    color: var(--green-soft);
+  }
+  .step > .wrap > p { margin: 0 0 16px; }
+  .step .body { padding-left: 52px; }
+  @media (max-width: 540px) { .step .body { padding-left: 0; } }
+
+  /* Lists */
+  ul.kit { list-style: none; margin: 0; padding: 0; }
+  ul.kit li { padding: 9px 0 9px 26px; position: relative; border-bottom: 1px solid var(--line); }
+  ul.kit li:last-child { border-bottom: none; }
+  ul.kit li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 17px;
+    width: 9px; height: 9px;
+    background: var(--brass);
+    transform: rotate(45deg);
+  }
+  ul.kit li b { color: var(--green-soft); }
+
+  .group-label {
+    font-family: "Mulish", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin: 26px 0 8px;
+  }
+
+  .note {
+    background: var(--plaster-deep);
+    border-left: 3px solid var(--brass);
+    padding: 18px 20px;
+    border-radius: 2px;
+    font-size: 16px;
+    margin: 22px 0 0;
+  }
+  .note b { color: var(--green-soft); }
+
+  .danger {
+    border-left-color: #9B4A2F;
+  }
+
+  /* CTA */
+  .cta-band { background: var(--green); color: var(--plaster); text-align: center; padding: 64px 0; }
+  .cta-band h2 { color: var(--plaster); }
+  .cta-band p { color: rgba(240, 233, 220, 0.8); max-width: 44ch; margin: 14px auto 0; }
+  .btn {
+    display: inline-block;
+    margin-top: 28px;
+    background: var(--brass);
+    color: #1a1208;
+    font-family: "Mulish", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+    padding: 16px 34px;
+    border-radius: 2px;
+    transition: background 0.18s ease;
+  }
+  .btn:hover { background: var(--brass-light); }
+  .btn:focus-visible { outline: 3px solid var(--plaster); outline-offset: 3px; }
+
+  /* Footer */
+  footer { background: var(--green); color: rgba(240, 233, 220, 0.62); text-align: center; padding: 40px 0 52px; border-top: 1px solid rgba(217,174,99,0.22); }
+  footer p { font-size: 13px; margin: 0 0 6px; }
+  footer .ar { font-family: "Amiri", serif; font-size: 17px; color: var(--brass-light); margin-bottom: 14px; }
+  footer .src { font-size: 12px; color: rgba(240,233,220,0.42); max-width: 52ch; margin: 16px auto 0; line-height: 1.5; }
+
+  a { color: var(--brass); }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="wrap">
+      <a class="back" href="index.html">← In her memory</a>
+      <span class="ar">دار نجاة</span>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="wrap">
+      <svg class="star" viewBox="0 0 100 100" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3">
+        <rect x="22" y="22" width="56" height="56"/>
+        <rect x="22" y="22" width="56" height="56" transform="rotate(45 50 50)"/>
+      </svg>
+      <p class="eyebrow">The Playbook</p>
+      <h1>Run a feeding in her name</h1>
+      <p>Five steps. You can do the whole thing in an afternoon, alone or with a few people. Keep it simple. Showing up matters more than scale.</p>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="step">
+      <div class="wrap">
+        <div class="step-head"><span class="num">1</span><h2>Decide before you go</h2></div>
+        <div class="body">
+          <p>Pick a day. Her birthday (14 October), the day she passed (28 June), or any day that's yours to give.</p>
+          <p>Choose what you're giving. Two good options, and you can do both:</p>
+          <ul class="kit">
+            <li><b>A meal.</b> Hot food you cooked, or store-bought sandwiches and fruit. Simple and filling beats elaborate.</li>
+            <li><b>Care kits.</b> Small bags of food, water, and hygiene items people can carry. Good when you won't stay long.</li>
+          </ul>
+          <p style="margin-top:16px;">Go with someone if you can. It's safer, and the work is lighter shared. Bring more than you think you need, and expect to talk to people, not just hand things over.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="step">
+      <div class="wrap">
+        <div class="step-head"><span class="num">2</span><h2>What to bring</h2></div>
+        <div class="body">
+          <p>The needs on the street are consistent: food, water, hygiene, and dry socks. Build around those.</p>
+
+          <p class="group-label">Food &amp; water</p>
+          <ul class="kit">
+            <li>Bottled water, the single most asked-for item in warm weather</li>
+            <li>Non-perishable, ready-to-eat food: protein bars, granola bars, nuts, dried fruit, jerky, crackers</li>
+            <li>Hot meals if you're serving on the spot</li>
+          </ul>
+
+          <p class="group-label">Hygiene</p>
+          <ul class="kit">
+            <li>Toothbrush, toothpaste, floss</li>
+            <li>Bar soap or body wash, deodorant, wet wipes</li>
+            <li>Lotion, lip balm, sunscreen</li>
+            <li>Feminine hygiene products, razors</li>
+            <li>Dry shampoo, which works when there's no shower</li>
+          </ul>
+
+          <p class="group-label">Warmth &amp; carry</p>
+          <ul class="kit">
+            <li>Socks, thick or wool. The most requested clothing item, year-round</li>
+            <li>Winter: gloves, hats, hand warmers, rain ponchos</li>
+            <li>Summer: extra water, sunscreen, electrolyte packets</li>
+            <li>A resealable gallon bag or small backpack to hold each kit</li>
+          </ul>
+
+          <p class="group-label">One card that lasts past today</p>
+          <ul class="kit">
+            <li>A printed resource card: local shelter, meal, shower, and laundry info, plus <b>2-1-1</b>, the national line for finding services</li>
+          </ul>
+
+          <div class="note">
+            <b>Leave these out.</b> No medications, not even Tylenol or Advil. No liquid hand sanitizer. Skip heavily scented products; unscented is safer for sensitive skin. And don't put your personal phone number or address in a kit. Major outreach groups ask for all of this.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="step">
+      <div class="wrap">
+        <div class="step-head"><span class="num">3</span><h2>Keep the food safe</h2></div>
+        <div class="body">
+          <p>If you're handing out food you prepared, a few rules keep people from getting sick.</p>
+          <ul class="kit">
+            <li><b>Wash your hands</b> with soap for 20 seconds before handling food. Sanitizer helps but doesn't replace it.</li>
+            <li><b>Mind the danger zone.</b> Bacteria grow fast between 40°F and 140°F. Keep hot food hot (140°F or above) and cold food cold (40°F or below).</li>
+            <li><b>The 2-hour rule.</b> Don't serve perishable food that's been sitting out more than 2 hours. Cut that to 1 hour if it's above 90°F outside.</li>
+            <li><b>Use gloves or tongs</b> for anything ready-to-eat, like bread, fruit, or sandwiches.</li>
+            <li>Carry hot food in an insulated bag or cooler with ice packs for cold items.</li>
+          </ul>
+          <div class="note danger">
+            <b>Cooking for a large group?</b> Rules vary by city and county, and a big cooked-food handout can fall under them. Call your local health department first. This matters once Dar Najat grows; for one person handing out sandwiches, the rules above are enough.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="step">
+      <div class="wrap">
+        <div class="step-head"><span class="num">4</span><h2>Serve with dignity</h2></div>
+        <div class="body">
+          <p>How you give matters as much as what you give. The point is one person treating another as an equal.</p>
+          <ul class="kit">
+            <li>Ask before you give. "Would you like some water?" not a thing pushed into someone's hands.</li>
+            <li>Make eye contact. Use a name if it's offered. A short conversation is often worth more than the kit.</li>
+            <li>Don't photograph people or their belongings. Their hard day is not your content.</li>
+            <li>Offer, don't preach. No strings, no conditions, no sermon attached to a meal.</li>
+            <li>Respect a no. Some people will decline. That's theirs to decide.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="step">
+      <div class="wrap">
+        <div class="step-head"><span class="num">5</span><h2>Log it before you forget</h2></div>
+        <div class="body">
+          <p>This is the part that outlives any one of us. When you log a feeding, the next person knows that corner was cared for, and Najat's name is on the record.</p>
+          <p>You'll note four things, and nothing that identifies the people you served:</p>
+          <ul class="kit">
+            <li><b>Where</b>, kept rough on purpose: a block, a park, an intersection. Never where someone sleeps.</li>
+            <li><b>When</b>, the date you went.</li>
+            <li><b>In whose name</b> you fed, so the memorial grows with each one.</li>
+            <li><b>What you gave</b>: meals, water, hygiene kits, socks.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="wrap">
+        <svg class="star" viewBox="0 0 100 100" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3">
+          <rect x="22" y="22" width="56" height="56"/>
+          <rect x="22" y="22" width="56" height="56" transform="rotate(45 50 50)"/>
+        </svg>
+        <h2>Done? Log your feeding.</h2>
+        <p>It takes a minute. It's how the house stays standing after any of us steps away.</p>
+        <a class="btn" href="log.html">Log a feeding</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p class="ar">دار نجاة</p>
+    <p>Built in memory of Najat Ihsane.</p>
+    <p>Meant to be carried by many hands.</p>
+    <p class="src">Food safety guidance follows USDA standards. Care-kit and outreach guidance draws on street outreach organizations that do this work daily.</p>
+  </footer>
+
+</body>
+</html>

@@ -38,3 +38,9 @@ create policy "public can insert feedings"
   for insert
   to anon
   with check (true);
+
+-- Table-level grants. RLS above decides WHICH rows; these grants decide
+-- whether the public (anon) role may touch the table at all. Both are
+-- required. Without these you get "permission denied for table feedings".
+grant usage on schema public to anon;
+grant select, insert on public.feedings to anon;

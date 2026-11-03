@@ -47,6 +47,51 @@
   }
   .thesis b { font-style: normal; font-weight: 700; color: var(--gold); }
 
+  /* Today panel */
+  .today { padding-block: 40px 8px; }
+  .today-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+  .today-date { font-family: var(--display); font-weight: 700; font-size: clamp(24px, 5vw, 30px); line-height: 1.15; color: var(--navy); margin: 0; }
+  .today-place { font-size: 14px; color: var(--muted); margin: 6px 0 0; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; }
+  .linkish { font: inherit; font-weight: 700; color: var(--terra); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .refresh {
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--body); font-size: 14px; font-weight: 700; color: var(--navy);
+    background: transparent; border: 1px solid rgba(27,42,74,0.3); border-radius: 999px; padding: 8px 14px; cursor: pointer;
+  }
+  .refresh:hover { border-color: var(--navy); }
+  .refresh:focus-visible, .linkish:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+  .refresh svg { width: 15px; height: 15px; }
+  .refresh.spin svg { animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .need { margin: 22px 0 0; border-radius: 14px; padding: 16px 18px; display: grid; gap: 4px; }
+  .need.on { background: var(--terra); color: #FFFFFF; }
+  .need.off { background: var(--ivory-deep); color: var(--ink); }
+  .need .k { font-size: 12px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.85; }
+  .need .v { font-size: 17px; font-weight: 700; line-height: 1.4; }
+  .need ul { margin: 6px 0 0; padding-left: 18px; font-size: 15px; font-weight: 600; }
+
+  .days7 { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin: 16px 0 0; }
+  .d { border-radius: 12px; background: var(--field); border: 1px solid var(--line); padding: 10px 4px; text-align: center; display: grid; gap: 2px; font-variant-numeric: tabular-nums; }
+  .d .dn { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--navy); }
+  .d .ds { font-size: 11px; color: var(--muted); line-height: 1.2; min-height: 2.4em; display: grid; place-items: center; }
+  .d .hi { font-size: 15px; font-weight: 800; color: var(--ink); }
+  .d .lo { font-size: 13px; color: var(--muted); }
+  .d .pp { font-size: 11px; color: var(--navy); }
+  .d.flag { border-color: var(--terra); background: var(--terra-soft); }
+  .d.flag .dn, .d.flag .lo { color: var(--terra); font-weight: 800; }
+  .d .chip { font-size: 10px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #FFFFFF; background: var(--terra); border-radius: 999px; padding: 1px 6px; justify-self: center; }
+  @media (max-width: 420px) { .days7 { gap: 4px; } .d { padding: 8px 2px; } .d .ds { font-size: 10px; } }
+
+  .tiles2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 16px 0 0; }
+  .tiles2 .tile:first-child { grid-column: 1 / -1; }
+  .tile { border-radius: 14px; padding: 14px 16px; background: var(--navy); color: var(--ivory); display: grid; gap: 2px; }
+  .tile .n { font-family: var(--display); font-weight: 700; font-size: 30px; line-height: 1.1; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .tile .t { font-size: 13px; color: var(--on-navy); }
+  .rule { font-size: 13px; color: var(--muted); margin: 14px 0 0; }
+  .credit { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+  .credit a { color: var(--muted); }
+
   section { padding-block: 72px; }
   section.tight { padding-top: 0; }
   h2 { font-family: var(--display); font-weight: 700; font-size: clamp(26px, 5vw, 34px); line-height: 1.2; margin: 0 0 18px; color: var(--navy); }
@@ -70,7 +115,7 @@
   }
 </style>
 </head>
-<body>
+<body id="top">
 
   <div class="topbar">
     <div class="wrap">
@@ -94,6 +139,38 @@
   </header>
 
   <main>
+
+  <section class="today" aria-labelledby="today-date">
+    <div class="wrap">
+      <p class="label">Today</p>
+      <div class="today-head">
+        <div>
+          <h2 class="today-date" id="today-date">&nbsp;</h2>
+          <p class="today-place"><span id="place">Vancouver, WA</span><button type="button" class="linkish" id="use-loc">Use my location</button></p>
+        </div>
+        <button type="button" class="refresh" id="t-refresh" aria-label="Refresh today's weather and counts">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+          Refresh
+        </button>
+      </div>
+
+      <div class="need off" id="need" aria-live="polite">
+        <span class="k">This week</span>
+        <span class="v">Loading the forecast…</span>
+      </div>
+
+      <div class="days7" id="days7" aria-label="Seven-day forecast"></div>
+
+      <div class="tiles2">
+        <div class="tile"><span class="n" id="anchor-n">&nbsp;</span><span class="t" id="anchor-t">&nbsp;</span></div>
+        <div class="tile"><span class="n" id="count-f">&ndash;</span><span class="t" id="count-f-t">feedings logged</span></div>
+        <div class="tile"><span class="n" id="count-p">&ndash;</span><span class="t">people fed, about</span></div>
+      </div>
+
+      <p class="rule">A day is flagged when the low is at or below freezing, the high reaches 90°F (32°C), or the weather service has a cold or heat alert out.</p>
+      <p class="credit" id="credit"><a href="https://open-meteo.com/" rel="noopener">Weather data by Open-Meteo.com</a></p>
+    </div>
+  </section>
     <section>
       <div class="wrap">
         <p class="label reveal">Why this exists</p>
@@ -139,7 +216,7 @@
   </main>
 
   <footer>
-    <img src="mark-on-navy-deep.svg" alt="">
+    <a class="home-link" href="#top" aria-label="Back to top"><img src="mark-on-navy-deep.svg" alt=""><span>Back to top</span></a>
     <p class="ar" lang="ar" dir="rtl">دار نجاة</p>
     <p>Built in memory of Najat Ihsane.</p>
     <p>Meant to be carried by many hands.</p>
@@ -162,5 +239,198 @@
     })();
   </script>
 
+
+  <script>
+  (function () {
+    var SUPABASE_URL = "https://nvacylouzxbahpnwqcrc.supabase.co";
+    var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52YWN5bG91enhiYWhwbndxY3JjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDY1MzgsImV4cCI6MjA5NTQ4MjUzOH0.495k-Aj9Er6YbWRC2xdeFqbV9RsbsCGiI56y-UQcZ4Q";
+    var DEFAULT = { lat: 45.6387, lon: -122.6615, name: "Vancouver, WA", us: true };
+    var CACHE_MIN = 30; // keep weather requests light; well under Open-Meteo's daily limit
+
+    function store(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+    function load(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
+
+    var loc = load("dn_loc") || DEFAULT;
+    var region = (navigator.language || "en-US").split("-")[1] || "US";
+    var useF = ["US", "LR", "MM"].indexOf(region.toUpperCase()) !== -1;
+    var $ = function (id) { return document.getElementById(id); };
+
+    // ---- Date and the next day in her name
+    function paintDate() {
+      var now = new Date();
+      $("today-date").textContent = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+      var y = now.getFullYear(), today = new Date(y, now.getMonth(), now.getDate());
+      var anchors = [
+        { m: 9, d: 14, what: "her birthday" },
+        { m: 5, d: 28, what: "the day she passed" }
+      ].map(function (a) {
+        var t = new Date(y, a.m, a.d);
+        if (t < today) t = new Date(y + 1, a.m, a.d);
+        return { t: t, what: a.what, days: Math.round((t - today) / 86400000) };
+      }).sort(function (a, b) { return a.days - b.days; });
+      var next = anchors[0];
+      if (next.days === 0) {
+        $("anchor-n").textContent = "Today";
+        $("anchor-t").textContent = "is " + next.what + ". Feed someone in her name.";
+      } else {
+        $("anchor-n").textContent = next.days + (next.days === 1 ? " day" : " days");
+        $("anchor-t").textContent = "until " + next.what + ", " + next.t.toLocaleDateString("en-US", { month: "long", day: "numeric" });
+      }
+    }
+
+    // ---- Weather
+    function sky(code) {
+      if (code === 0) return "Clear";
+      if (code <= 2) return "Partly cloudy";
+      if (code === 3) return "Cloudy";
+      if (code === 45 || code === 48) return "Fog";
+      if (code >= 51 && code <= 57) return "Drizzle";
+      if (code >= 61 && code <= 67) return "Rain";
+      if (code >= 71 && code <= 77) return "Snow";
+      if (code >= 80 && code <= 82) return "Showers";
+      if (code === 85 || code === 86) return "Snow showers";
+      if (code >= 95) return "Storms";
+      return "";
+    }
+    var FREEZE = useF ? 32 : 0, HOT = useF ? 90 : 32, U = useF ? "°F" : "°C";
+
+    async function getForecast(force) {
+      var key = "dn_wx_" + loc.lat.toFixed(2) + "_" + loc.lon.toFixed(2) + "_" + U;
+      var hit = load(key);
+      if (!force && hit && Date.now() - hit.at < CACHE_MIN * 60000) return hit.data;
+      var url = "https://api.open-meteo.com/v1/forecast?latitude=" + loc.lat + "&longitude=" + loc.lon +
+        "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max" +
+        "&timezone=auto&forecast_days=7" + (useF ? "&temperature_unit=fahrenheit" : "");
+      var r = await fetch(url);
+      if (!r.ok) throw new Error("forecast " + r.status);
+      var data = await r.json();
+      store(key, { at: Date.now(), data: data });
+      return data;
+    }
+
+    // Cold and heat alerts from the U.S. National Weather Service (US locations only).
+    async function getAlerts() {
+      var r = await fetch("https://api.weather.gov/alerts/active?point=" + loc.lat.toFixed(4) + "," + loc.lon.toFixed(4),
+        { headers: { Accept: "application/geo+json" } });
+      if (!r.ok) return null;   // outside the US, or the service is down
+      var j = await r.json();
+      var keep = /cold|freeze|frost|wind chill|winter|snow|ice|blizzard|heat/i;
+      var seen = {};
+      return (j.features || []).map(function (f) { return f.properties && f.properties.event; })
+        .filter(function (e) { if (!e || !keep.test(e) || seen[e]) return false; seen[e] = 1; return true; });
+    }
+
+    function paintWeather(data, nws) {
+      var alerts = nws || [];
+      var d = data.daily, box = $("days7");
+      box.innerHTML = "";
+      var flagged = [];
+      d.time.forEach(function (t, i) {
+        var p = t.split("-"), date = new Date(+p[0], +p[1] - 1, +p[2]);
+        var hi = Math.round(d.temperature_2m_max[i]), lo = Math.round(d.temperature_2m_min[i]);
+        var cold = lo <= FREEZE, hot = hi >= HOT;
+        var name = i === 0 ? "Today" : date.toLocaleDateString("en-US", { weekday: "short" });
+        if (cold) flagged.push({ name: i === 0 ? "tonight" : date.toLocaleDateString("en-US", { weekday: "long" }), why: "low " + lo + U });
+        if (hot) flagged.push({ name: i === 0 ? "today" : date.toLocaleDateString("en-US", { weekday: "long" }), why: "high " + hi + U });
+        var cell = document.createElement("div");
+        cell.className = "d" + (cold || hot ? " flag" : "");
+        var pp = d.precipitation_probability_max ? d.precipitation_probability_max[i] : null;
+        cell.innerHTML = '<span class="dn"></span><span class="ds"></span><span class="hi"></span><span class="lo"></span>' +
+          (pp != null ? '<span class="pp"></span>' : "") + (cold || hot ? '<span class="chip"></span>' : "");
+        cell.querySelector(".dn").textContent = name;
+        cell.querySelector(".ds").textContent = sky(d.weather_code[i]);
+        cell.querySelector(".hi").textContent = hi + "°";
+        cell.querySelector(".lo").textContent = lo + "°";
+        if (pp != null) cell.querySelector(".pp").textContent = pp + "% rain";
+        if (cold || hot) cell.querySelector(".chip").textContent = cold ? "Cold" : "Heat";
+        cell.setAttribute("aria-label", name + ": " + sky(d.weather_code[i]) + ", high " + hi + U + ", low " + lo + U + (cold ? ", cold flag" : "") + (hot ? ", heat flag" : ""));
+        box.appendChild(cell);
+      });
+
+      var need = $("need");
+      need.innerHTML = '<span class="k"></span><span class="v"></span>';
+      if (flagged.length || alerts.length) {
+        need.className = "need on";
+        need.querySelector(".k").textContent = "Help most needed";
+        need.querySelector(".v").textContent = flagged.length
+          ? flagged.slice(0, 3).map(function (f) { return f.name.charAt(0).toUpperCase() + f.name.slice(1) + " (" + f.why + ")"; }).join(", ") + (flagged.length > 3 ? ", and more" : "") + ". Warm food, socks, gloves and water go furthest."
+          : "The weather service has an alert out. Check on people outside.";
+        if (alerts.length) {
+          var ul = document.createElement("ul");
+          alerts.forEach(function (a) { var li = document.createElement("li"); li.textContent = a + " (National Weather Service)"; ul.appendChild(li); });
+          need.appendChild(ul);
+        }
+      } else {
+        need.className = "need off";
+        need.querySelector(".k").textContent = "This week";
+        need.querySelector(".v").textContent = "No cold or heat flags in the next seven days. Any day is a good day to feed someone.";
+      }
+      $("credit").innerHTML = '<a href="https://open-meteo.com/" rel="noopener">Weather data by Open-Meteo.com</a>' + (nws ? ' · Alerts from the <a href="https://www.weather.gov/" rel="noopener">U.S. National Weather Service</a>' : "");
+    }
+
+    async function refreshWeather(force) {
+      $("place").textContent = loc.name;
+      try {
+        var both = await Promise.all([getForecast(force), getAlerts().catch(function () { return null; })]);
+        paintWeather(both[0], both[1]);
+      } catch (e) {
+        var need = $("need");
+        need.className = "need off";
+        need.innerHTML = '<span class="k">This week</span><span class="v">Couldn\'t load the forecast. Pull down or tap Refresh to try again.</span>';
+      }
+    }
+
+    // ---- Live counts, straight from the community log
+    async function refreshCounts() {
+      try {
+        var r = await fetch(SUPABASE_URL + "/rest/v1/feedings?select=people_count", {
+          headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + SUPABASE_ANON_KEY }
+        });
+        if (!r.ok) throw new Error(r.status);
+        var rows = await r.json();
+        var people = rows.reduce(function (s, x) { return s + (x.people_count || 0); }, 0);
+        $("count-f").textContent = rows.length.toLocaleString("en-US");
+        $("count-f-t").textContent = rows.length === 1 ? "feeding logged" : "feedings logged";
+        $("count-p").textContent = people.toLocaleString("en-US");
+      } catch (e) {}
+    }
+
+    async function refreshAll(force) {
+      paintDate();
+      await Promise.all([refreshWeather(force), refreshCounts()]);
+    }
+
+    $("t-refresh").addEventListener("click", async function () {
+      var b = this; b.classList.add("spin"); b.disabled = true;
+      await refreshAll(true);
+      b.classList.remove("spin"); b.disabled = false;
+    });
+
+    $("use-loc").addEventListener("click", function () {
+      var b = this;
+      if (loc.name !== DEFAULT.name) {
+        loc = DEFAULT; store("dn_loc", DEFAULT); b.textContent = "Use my location"; refreshWeather(true);
+        return;
+      }
+      if (!navigator.geolocation) { b.textContent = "Location not available"; return; }
+      b.textContent = "Finding you…";
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        // Rounded to about 1 km. Only used to fetch weather; never saved anywhere but this phone.
+        var lat = Math.round(pos.coords.latitude * 100) / 100, lon = Math.round(pos.coords.longitude * 100) / 100;
+        loc = { lat: lat, lon: lon, name: "Near you" };
+        store("dn_loc", loc);
+        b.textContent = "Reset to Vancouver";
+        refreshWeather(true);
+      }, function () {
+        b.textContent = "Location blocked. Using Vancouver";
+      }, { timeout: 10000, maximumAge: 600000 });
+    });
+    if (loc.name !== DEFAULT.name) $("use-loc").textContent = "Reset to Vancouver";
+
+    window.darRefresh = function () { return refreshAll(true); };
+    refreshAll(false);
+  })();
+  </script>
+  <script src="ptr.js"></script>
 </body>
 </html>

@@ -68,6 +68,7 @@
   textarea { resize: vertical; min-height: 76px; }
   input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(27,42,74,0.16); }
   select { appearance: auto; }
+  select[hidden], input[hidden] { display: none; }
 
   .row { display: flex; gap: 14px; }
   .row .field { flex: 1; }
@@ -219,7 +220,8 @@
             </div>
             <div class="field state">
               <label for="state">State or region <span class="hint">(optional)</span></label>
-              <input type="text" id="state" name="state" maxlength="100" placeholder="WA">
+              <select id="state_us" name="state_us" aria-label="State"><option value="">Choose a state</option></select>
+              <input type="text" id="state" name="state" maxlength="100" placeholder="Region or province" hidden>
             </div>
           </div>
 
@@ -317,6 +319,19 @@
       var dn = new Intl.DisplayNames(["en"], { type: "region" });
       regionName = function (c) { try { return dn.of(c) || c; } catch (e) { return c; } };
     } catch (e) {}
+    // US states as two-letter codes so the same state never splits into two spellings.
+    var US_STATES = [["AL","Alabama"],["AK","Alaska"],["AZ","Arizona"],["AR","Arkansas"],["CA","California"],["CO","Colorado"],["CT","Connecticut"],["DE","Delaware"],["DC","District of Columbia"],["FL","Florida"],["GA","Georgia"],["HI","Hawaii"],["ID","Idaho"],["IL","Illinois"],["IN","Indiana"],["IA","Iowa"],["KS","Kansas"],["KY","Kentucky"],["LA","Louisiana"],["ME","Maine"],["MD","Maryland"],["MA","Massachusetts"],["MI","Michigan"],["MN","Minnesota"],["MS","Mississippi"],["MO","Missouri"],["MT","Montana"],["NE","Nebraska"],["NV","Nevada"],["NH","New Hampshire"],["NJ","New Jersey"],["NM","New Mexico"],["NY","New York"],["NC","North Carolina"],["ND","North Dakota"],["OH","Ohio"],["OK","Oklahoma"],["OR","Oregon"],["PA","Pennsylvania"],["PR","Puerto Rico"],["RI","Rhode Island"],["SC","South Carolina"],["SD","South Dakota"],["TN","Tennessee"],["TX","Texas"],["UT","Utah"],["VT","Vermont"],["VA","Virginia"],["WA","Washington"],["WV","West Virginia"],["WI","Wisconsin"],["WY","Wyoming"]];
+    var stateSel = document.getElementById("state_us");
+    var stateTxt = document.getElementById("state");
+    US_STATES.forEach(function (st) {
+      var o = document.createElement("option"); o.value = st[0]; o.textContent = st[1]; stateSel.appendChild(o);
+    });
+    stateSel.value = "WA";
+    function syncState() {
+      var us = document.getElementById("country").value === "US";
+      stateSel.hidden = !us; stateTxt.hidden = us;
+    }
+
     (function fillCountries() {
       var sel = document.getElementById("country");
       sel.innerHTML = "";
@@ -330,6 +345,8 @@
           if (o.code === "US") opt.selected = true;
           sel.appendChild(opt);
         });
+      sel.addEventListener("change", syncState);
+      syncState();
     })();
 
     // Default the date to today, in local time.
@@ -487,11 +504,7 @@
         feeding_date: form.feeding_date.value,
         location_label: location,
         city: form.city.value.trim() || null,
-        state: (function () {
-          var v = form.state.value.trim();
-          if (!v) return null;
-          return (form.country.value === "US" && v.length === 2) ? v.toUpperCase() : v;
-        })(),
+        state: form.country.value === "US" ? (stateSel.value || null) : (form.state.value.trim() || null),
         country: form.country.value || "US",
         in_memory_of: form.in_memory_of.value.trim() || "Najat Ihsane",
         items: items,
@@ -524,7 +537,7 @@
       // Reset for the next entry, keep the date and the dedication.
       form.location_label.value = "";
       form.city.value = "";
-      form.state.value = "";
+      form.state.value = "";  // the state picker keeps its choice for the next entry
       form.people_count.value = "";
       form.note.value = "";
       Array.prototype.slice.call(form.querySelectorAll('input[name="items"]')).forEach(function (i) {

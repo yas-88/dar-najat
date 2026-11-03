@@ -108,6 +108,14 @@
   }
   .day-note { margin: 0; }
 
+  .rem-sub { color: var(--muted); font-size: 16px; }
+  .names { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .names li {
+    display: inline-flex; align-items: baseline; gap: 8px; padding: 10px 16px; border-radius: 999px;
+    background: var(--field); border: 1px solid var(--line); font-family: var(--display); font-size: 19px; color: var(--navy);
+  }
+  .names li .c { font-family: var(--body); font-size: 12px; font-weight: 800; color: var(--terra); letter-spacing: 0.04em; }
+  .names li.names-empty { font-family: var(--body); font-size: 15px; color: var(--muted); background: none; border: 0; padding: 0; }
   .cal { margin-top: 26px; display: grid; gap: 8px; justify-items: start; }
   .cal-btn {
     display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
@@ -220,6 +228,15 @@
       </div>
     </section>
     -->
+
+    <section class="tight" id="remembered">
+      <div class="wrap">
+        <p class="label">Remembered here</p>
+        <h2>Names fed in memory of</h2>
+        <p class="rem-sub">Every name below came from someone who ran a feeding and logged it.</p>
+        <ul class="names" id="names"><li class="names-empty">Loading names…</li></ul>
+      </div>
+    </section>
 
     <section class="cta-band">
       <div class="wrap">
@@ -398,7 +415,7 @@
     // ---- Live counts, straight from the community log
     async function refreshCounts() {
       try {
-        var r = await fetch(SUPABASE_URL + "/rest/v1/feedings?select=people_count", {
+        var r = await fetch(SUPABASE_URL + "/rest/v1/feedings?select=people_count,in_memory_of", {
           headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + SUPABASE_ANON_KEY }
         });
         if (!r.ok) throw new Error(r.status);
@@ -406,8 +423,37 @@
         var people = rows.reduce(function (s, x) { return s + (x.people_count || 0); }, 0);
         $("count-f").textContent = rows.length.toLocaleString("en-US");
         $("count-f-t").textContent = rows.length === 1 ? "feeding logged" : "feedings logged";
+        paintNames(rows);
         $("count-p").textContent = people.toLocaleString("en-US");
       } catch (e) {}
+    }
+
+    // Names remembered: grouped ignoring case and extra spaces, most-fed first.
+    function paintNames(rows) {
+      var groups = {};
+      rows.forEach(function (x) {
+        var n = (x.in_memory_of || "").replace(/\s+/g, " ").trim();
+        if (!n) return;
+        var k = n.toLowerCase();
+        if (!groups[k]) groups[k] = { name: n, count: 0 };
+        groups[k].count++;
+      });
+      var list = Object.keys(groups).map(function (k) { return groups[k]; })
+        .sort(function (a, b) { return b.count - a.count || a.name.localeCompare(b.name); });
+      var ul = $("names");
+      ul.innerHTML = "";
+      if (!list.length) {
+        var e = document.createElement("li"); e.className = "names-empty";
+        e.textContent = "No names yet. Log a feeding and yours will be the first.";
+        ul.appendChild(e); return;
+      }
+      list.forEach(function (g) {
+        var li = document.createElement("li");
+        li.appendChild(document.createTextNode(g.name));
+        var c = document.createElement("span"); c.className = "c";
+        c.textContent = g.count + (g.count === 1 ? " feeding" : " feedings");
+        li.appendChild(c); ul.appendChild(li);
+      });
     }
 
     async function refreshAll(force) {

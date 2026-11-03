@@ -109,6 +109,17 @@
   .submit:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
   .submit:disabled { opacity: 0.55; cursor: default; }
 
+  /* Your feedings (this phone only) */
+  .mine { padding: 40px 0 0; }
+  .mine h2 { font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--navy); margin: 0 0 4px; }
+  .mine .sub { font-size: 15px; color: var(--muted); margin: 0 0 14px; }
+  .mine-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .mine-list li { padding: 12px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; font-size: 16px; }
+  .mine-list .w { font-weight: 700; color: var(--navy); }
+  .mine-list .m { font-size: 14px; color: var(--muted); }
+  .mine-list .d { font-size: 13px; font-weight: 600; color: var(--terra); white-space: nowrap; }
+  .mine-note { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+
   /* Coverage */
   .coverage { padding: 56px 0 0; }
   .coverage h2 { font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--navy); margin: 0 0 4px; }
@@ -262,6 +273,13 @@
           <button type="submit" class="submit" id="submit">Log this feeding</button>
         </form>
       </div>
+
+      <section class="mine" id="mine" hidden>
+        <h2>Your feedings</h2>
+        <p class="sub" id="mine-sub"></p>
+        <ul class="mine-list" id="mine-list"></ul>
+        <p class="mine-note">Saved only on this phone, so you can look back at what you've given.</p>
+      </section>
 
       <section class="coverage">
         <div class="cov-head">
@@ -524,6 +542,7 @@
           var res = await client.from("feedings").insert([payload]);
           if (res.error) throw res.error;
           banner.className = "banner hide";
+          rememberMine(payload);
           showInvite();
           await loadList();
         } catch (err) {
@@ -581,6 +600,34 @@
         copyStatus.textContent = msg;
       }
     });
+
+    // ---- Your feedings, kept on this phone only
+    function readMine() { try { return JSON.parse(localStorage.getItem("dn_mine")) || []; } catch (e) { return []; } }
+    function rememberMine(p) {
+      var list = readMine();
+      list.unshift({ d: p.feeding_date, w: p.location_label, c: p.city, s: p.state, m: p.in_memory_of, n: p.people_count });
+      try { localStorage.setItem("dn_mine", JSON.stringify(list.slice(0, 200))); } catch (e) {}
+      paintMine();
+    }
+    function paintMine() {
+      var list = readMine(), box = document.getElementById("mine");
+      if (!list.length) { box.hidden = true; return; }
+      box.hidden = false;
+      var people = list.reduce(function (s, x) { return s + (x.n || 0); }, 0);
+      document.getElementById("mine-sub").textContent = list.length + (list.length === 1 ? " feeding" : " feedings") +
+        " logged from this phone" + (people ? ", about " + people + " people fed." : ".");
+      var ul = document.getElementById("mine-list"); ul.innerHTML = "";
+      list.slice(0, 20).forEach(function (x) {
+        var li = document.createElement("li");
+        var left = document.createElement("div");
+        var w = document.createElement("div"); w.className = "w"; w.textContent = x.w + (x.c ? ", " + x.c : "");
+        var m = document.createElement("div"); m.className = "m"; m.textContent = "In memory of " + (x.m || "a loved one");
+        left.appendChild(w); left.appendChild(m);
+        var d = document.createElement("span"); d.className = "d"; d.textContent = fmtDate(x.d);
+        li.appendChild(left); li.appendChild(d); ul.appendChild(li);
+      });
+    }
+    paintMine();
 
     window.darRefresh = loadList;  // pull to refresh reloads the list in place
     loadList();

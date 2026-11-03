@@ -121,6 +121,39 @@
     border-left-color: var(--terra);
   }
 
+
+  /* Resource card */
+  .rcard-wrap { margin-top: 18px; }
+  .rcard {
+    background: var(--navy); color: var(--ivory); border-radius: 16px; padding: 20px 22px;
+    border: 2px solid var(--gold); max-width: 420px;
+  }
+  .rc-k { font-size: 12px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin: 0 0 4px; }
+  .rc-big { font-family: var(--display); font-size: 40px; font-weight: 700; line-height: 1.1; margin: 0 0 8px; }
+  .rc-big b { color: var(--gold); }
+  .rc-line { font-size: 16px; margin: 0 0 6px; color: var(--on-navy); }
+  .rc-line b { color: var(--ivory); }
+  .rc-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  .rc-btn { font-family: var(--body); font-weight: 800; font-size: 15px; border-radius: 999px; padding: 12px 20px; cursor: pointer; background: var(--navy); color: var(--ivory); border: 2px solid var(--navy); }
+  .rc-btn.rc-ghost { background: transparent; color: var(--navy); }
+  .rc-btn:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+  .rc-src { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
+  /* Full-screen card to hold up for someone */
+  body.showing-card { overflow: hidden; }
+  .rc-overlay { position: fixed; inset: 0; z-index: 60; background: var(--navy); display: grid; place-items: center; padding: 24px; padding-top: calc(24px + env(safe-area-inset-top, 0px)); }
+  .rc-overlay .rcard { border: 0; max-width: 520px; font-size: 1.2em; }
+  .rc-overlay .rc-big { font-size: 64px; }
+  .rc-overlay .rc-line { font-size: 21px; }
+  .rc-close { position: absolute; top: calc(16px + env(safe-area-inset-top, 0px)); right: 16px; background: var(--gold); color: var(--navy); border: 0; border-radius: 999px; font-weight: 800; font-size: 15px; padding: 10px 16px; font-family: var(--body); }
+  /* Print: four cards per page, nothing else */
+  #print-sheet { display: none; }
+  @media print {
+    html, body { background: #fff !important; }
+    body > *:not(#print-sheet) { display: none !important; }
+    #print-sheet { display: grid !important; grid-template-columns: 1fr 1fr; gap: 0.4in; padding: 0.3in; }
+    #print-sheet .rcard { background: #fff !important; color: #000 !important; border: 1.5px dashed #555; max-width: none; padding: 0.25in; }
+    #print-sheet .rc-k, #print-sheet .rc-big b, #print-sheet .rc-line, #print-sheet .rc-line b { color: #000 !important; }
+  }
 </style>
 </head>
 <body id="top">
@@ -196,6 +229,20 @@
           <ul class="kit">
             <li>A printed resource card: local shelter, meal, shower, and laundry info, plus <b>2-1-1</b>, the national line for finding services</li>
           </ul>
+
+          <div class="rcard-wrap">
+            <div class="rcard" id="rcard">
+              <p class="rc-k">Help near you, any time</p>
+              <p class="rc-big">Dial <b>2-1-1</b></p>
+              <p class="rc-line">Free and confidential. Connects you to local programs for food, shelter, and more.</p>
+              <p class="rc-line rc-local"><b>Oregon and SW Washington:</b> text your ZIP code to <b>898211</b>, or visit <b>211info.org</b></p>
+            </div>
+            <div class="rc-actions">
+              <button type="button" class="rc-btn" id="rc-print">Print cards</button>
+              <button type="button" class="rc-btn rc-ghost" id="rc-show">Show on my phone</button>
+            </div>
+            <p class="rc-src">211info contact details from Clark County's resource page and OregonLawHelp, checked November 2026.</p>
+          </div>
 
           <div class="note">
             <b>Leave these out.</b> No medications, not even Tylenol or Advil. No liquid hand sanitizer. Skip heavily scented products; unscented is safer for sensitive skin. And don't put your personal phone number or address in a kit. Major outreach groups ask for all of this.
@@ -273,6 +320,28 @@
     <p class="src">Food safety guidance follows USDA standards. Care-kit and outreach guidance draws on street outreach organizations that do this work daily.</p>
   </footer>
 
+
+  <script>
+  (function () {
+    var card = document.getElementById("rcard");
+    var sheet = document.createElement("div");
+    sheet.id = "print-sheet";
+    for (var i = 0; i < 4; i++) { var c = card.cloneNode(true); c.removeAttribute("id"); sheet.appendChild(c); }
+    document.body.appendChild(sheet);
+    document.getElementById("rc-print").addEventListener("click", function () { window.print(); });
+    document.getElementById("rc-show").addEventListener("click", function () {
+      var o = document.createElement("div");
+      o.className = "rc-overlay"; o.setAttribute("role", "dialog"); o.setAttribute("aria-label", "Resource card");
+      var c = card.cloneNode(true); c.removeAttribute("id");
+      var x = document.createElement("button"); x.className = "rc-close"; x.type = "button"; x.textContent = "Close";
+      o.appendChild(x); o.appendChild(c); document.body.appendChild(o); document.body.classList.add("showing-card");
+      try { if (navigator.wakeLock) navigator.wakeLock.request("screen").catch(function () {}); } catch (e) {}
+      function close() { o.remove(); document.body.classList.remove("showing-card"); }
+      x.addEventListener("click", close); x.focus();
+      document.addEventListener("keydown", function esc(e) { if (e.key === "Escape") { close(); document.removeEventListener("keydown", esc); } });
+    });
+  })();
+  </script>
   <script src="ptr.js"></script>
 </body>
 </html>

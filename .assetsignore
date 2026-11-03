@@ -4,3 +4,6 @@
 .assetsignore
 wrangler.jsonc
 setup.sql
+.github
+data
+HANDOVER.md

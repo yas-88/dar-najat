@@ -1,0 +1,61 @@
+# Dar Najat: keep the database awake and keep a copy of the log in this repo.
+#
+# Daily: reads the public feedings list from Supabase. That counts as activity,
+#        so the free project is not paused for inactivity.
+# Saves:  data/feedings.json is rewritten from that read and committed only
+#        when something changed (a new feeding, a hidden entry).
+# Monthly: data/last-checked.txt is updated on the 1st so the repo always has
+#        activity; GitHub switches off schedules in public repos after 60
+#        quiet days.
+#
+# Uses the same public (anon) key the website ships, so it can only see what
+# the public site sees. Hidden entries are never copied here.
+
+name: Keep alive and back up
+
+on:
+  schedule:
+    - cron: "23 15 * * *"   # every day, 15:23 UTC (about 7:23 or 8:23 in Vancouver)
+  workflow_dispatch: {}     # lets you run it by hand from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read the public log from Supabase
+        env:
+          SUPABASE_URL: https://nvacylouzxbahpnwqcrc.supabase.co
+          SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52YWN5bG91enhiYWhwbndxY3JjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MDY1MzgsImV4cCI6MjA5NTQ4MjUzOH0.495k-Aj9Er6YbWRC2xdeFqbV9RsbsCGiI56y-UQcZ4Q
+        run: |
+          set -euo pipefail
+          mkdir -p data
+          curl -sS --fail \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            "$SUPABASE_URL/rest/v1/feedings?select=id,created_at,feeding_date,location_label,city,state,country,in_memory_of,items,people_count,note&order=created_at.asc" \
+            -o data/feedings.new.json
+          python3 -c "import json;d=json.load(open('data/feedings.new.json'));json.dump(d,open('data/feedings.json','w'),indent=2,ensure_ascii=False);print(len(d),'feedings')"
+          rm data/feedings.new.json
+
+      - name: Monthly check-in
+        run: |
+          if [ "$(date -u +%d)" = "01" ] || [ ! -f data/last-checked.txt ]; then
+            date -u +"Last monthly check: %Y-%m-%d" > data/last-checked.txt
+          fi
+
+      - name: Commit if anything changed
+        run: |
+          git config user.name "dar-najat-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Backup: feedings log $(date -u +%Y-%m-%d)"
+            git push
+          fi

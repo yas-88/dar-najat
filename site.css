@@ -1,0 +1,101 @@
+/* Dar Najat shared styles. Colors and type live here once; pages add only what is theirs. */
+:root {
+  --navy: #1B2A4A;
+  --navy-soft: #22375E;
+  --navy-deep: #131E36;
+  --gold: #E2C488;        /* on navy only */
+  --brass: #AD8530;       /* marks and ornaments on ivory, never body text (2.8:1) */
+  --terra: #9A4F3A;       /* labels and "help needed" accents on ivory (4.9:1) */
+  --terra-soft: #F3DED5;
+  --ivory: #F0E9DC;
+  --ivory-deep: #E6DCCB;
+  --field: #FBF7EF;
+  --ink: #241F18;
+  --muted: rgba(36, 31, 24, 0.66);
+  --line: rgba(36, 31, 24, 0.14);
+  --on-navy: rgba(240, 233, 220, 0.8);
+
+  --display: "Amiri", "Times New Roman", serif;
+  --body: "Mulish", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--ivory);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--terra); }
+h1, h2 { text-wrap: balance; }
+
+.wrap {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+}
+
+/* Top bar: same on every page, sits under the phone's status bar when installed */
+.topbar { background: var(--navy); padding-top: env(safe-area-inset-top, 0px); }
+.topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ivory); }
+.brand img { width: 34px; height: 34px; display: block; }
+.brand span { font-weight: 800; font-size: 14px; letter-spacing: 0.16em; }
+.nav { display: flex; gap: 4px; }
+.nav a {
+  color: var(--on-navy); text-decoration: none; font-size: 14px; font-weight: 600;
+  padding: 8px 12px; border-radius: 999px;
+}
+.nav a:hover { color: var(--gold); }
+.nav a[aria-current="page"] { color: var(--navy); background: var(--gold); }
+@media (max-width: 400px) { .brand span { display: none; } }
+
+/* Hero mark */
+.mark { display: block; margin: 0 auto; }
+
+/* Section label: small caps over headings */
+.label {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--terra); margin: 0 0 16px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block; background: var(--gold); color: var(--navy);
+  font-family: var(--body); font-weight: 800; font-size: 16px; letter-spacing: 0.02em;
+  text-decoration: none; padding: 16px 34px; border-radius: 999px; border: 0; cursor: pointer;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+.btn:hover { background: #EBD3A0; }
+.btn:active { transform: scale(0.98); }
+.btn:focus-visible { outline: 3px solid var(--ivory); outline-offset: 3px; }
+
+/* Navy band used for calls to action */
+.cta-band { background: var(--navy); color: var(--ivory); text-align: center; padding-block: 64px; }
+.cta-band h2 { color: var(--ivory); }
+.cta-band p { color: var(--on-navy); max-width: 44ch; margin: 14px auto 0; }
+.cta-band .btn { margin-top: 28px; }
+
+/* Footer */
+footer {
+  background: var(--navy-deep); color: rgba(240, 233, 220, 0.66); text-align: center;
+  padding: 44px 0 calc(52px + env(safe-area-inset-bottom, 0px));
+}
+footer img { width: 40px; height: 40px; margin: 0 auto 16px; display: block; }
+footer p { font-size: 13px; margin: 0 0 6px; }
+footer .ar { font-family: var(--display); font-size: 18px; color: var(--gold); margin-bottom: 12px; }
+footer .src { font-size: 12px; color: rgba(240, 233, 220, 0.5); max-width: 52ch; margin: 16px auto 0; line-height: 1.5; }
+
+/* Gentle reveal; content is visible without script */
+.js .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.js .reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js .reveal { opacity: 1; transform: none; transition: none; }
+}

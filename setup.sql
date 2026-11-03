@@ -44,3 +44,21 @@ create policy "public can insert feedings"
 -- required. Without these you get "permission denied for table feedings".
 grant usage on schema public to anon;
 grant select, insert on public.feedings to anon;
+
+-- ---------------------------------------------------------------------
+-- 2026-11 update: global-ready location.
+-- Adds a two-letter ISO country code (existing rows become US) and lets
+-- "state" hold any region name, not only a two-letter US code.
+-- Safe to run more than once. Run this BEFORE pushing the log page that
+-- sends a country, or new feedings will fail to save.
+-- ---------------------------------------------------------------------
+alter table public.feedings
+  add column if not exists country text not null default 'US';
+
+alter table public.feedings drop constraint if exists feedings_country_check;
+alter table public.feedings
+  add constraint feedings_country_check check (country ~ '^[A-Z]{2}$');
+
+alter table public.feedings drop constraint if exists feedings_state_check;
+alter table public.feedings
+  add constraint feedings_state_check check (state is null or char_length(state) <= 100);

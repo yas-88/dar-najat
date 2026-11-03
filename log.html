@@ -2,67 +2,40 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Log a feeding — Dar Najat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Log a feeding · Dar Najat</title>
 <meta name="description" content="Record a feeding so others know the spot is covered, and Najat's name stays on the work.">
 <meta name="theme-color" content="#1B2A4A">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Dar Najat">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://charity.safjob.com/">
-<meta property="og:title" content="Dar Najat — Feed someone in a loved one’s name">
+<meta property="og:title" content="Dar Najat · Feed someone in a loved one’s name">
 <meta property="og:description" content="A house built in memory of Najat Ihsane. Run a feeding for someone without a home, in a loved one’s name.">
 <meta property="og:image" content="https://charity.safjob.com/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Dar Najat — Feed someone in a loved one’s name">
+<meta name="twitter:title" content="Dar Najat · Feed someone in a loved one’s name">
 <meta name="twitter:description" content="A house built in memory of Najat Ihsane. Run a feeding for someone without a home, in a loved one’s name.">
 <meta name="twitter:image" content="https://charity.safjob.com/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  :root {
-    --plaster: #F0E9DC;
-    --plaster-deep: #E6DCCB;
-    --green: #1B2A4A;
-    --green-soft: #22375E;
-    --ink: #241F18;
-    --brass: #AD8530;
-    --brass-light: #E2C488;
-    --indigo: #2C3566;
-    --line: rgba(36, 31, 24, 0.14);
-    --field: #FBF7EF;
-  }
 
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    margin: 0;
-    background: var(--plaster);
-    color: var(--ink);
-    font-family: "Mulish", system-ui, sans-serif;
-    font-size: 18px;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  .wrap { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 24px; }
-
-  .topbar { background: var(--green); }
-  .topbar .wrap { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; }
-  .back { font-family: "Mulish", sans-serif; font-size: 13px; letter-spacing: 0.06em; color: rgba(240,233,220,0.72); text-decoration: none; }
-  .back:hover { color: var(--brass-light); }
-  .topbar .ar { font-family: "Amiri", serif; color: var(--brass-light); font-size: 18px; }
-
-  .hero { background: var(--green); color: var(--plaster); padding: 24px 0 56px; text-align: center; }
-  .star { width: 40px; height: 40px; margin: 0 auto 20px; display: block; color: var(--brass-light); }
-  .eyebrow { font-family: "Mulish", sans-serif; font-size: 12px; letter-spacing: 0.32em; text-transform: uppercase; color: rgba(240,233,220,0.6); margin: 0 0 12px; }
-  .hero h1 { font-family: "Amiri", serif; font-weight: 700; font-size: clamp(30px, 6vw, 46px); line-height: 1.1; margin: 0 0 16px; }
+  .hero { background: var(--navy); color: var(--ivory); padding: 32px 0 56px; text-align: center; }
+  .hero .mark { width: 64px; height: 64px; margin-bottom: 18px; }
+  .eyebrow { font-family: var(--body); font-size: 12px; letter-spacing: 0.32em; text-transform: uppercase; color: rgba(240,233,220,0.6); margin: 0 0 12px; }
+  .hero h1 { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 6vw, 46px); line-height: 1.1; margin: 0 0 16px; }
   .hero p { color: rgba(240,233,220,0.82); max-width: 38ch; margin: 0 auto; }
 
   main { padding: 44px 0 0; }
@@ -75,16 +48,16 @@
   .banner.hide { display: none; }
 
   /* Form */
-  .card { background: var(--plaster-deep); border-radius: 4px; padding: 28px; }
-  .card h2 { font-family: "Amiri", serif; font-weight: 700; font-size: 24px; color: var(--green-soft); margin: 0 0 4px; }
+  .card { background: var(--ivory-deep); border-radius: 4px; padding: 28px; }
+  .card h2 { font-family: var(--display); font-weight: 700; font-size: 24px; color: var(--navy); margin: 0 0 4px; }
   .card .sub { font-size: 15px; color: rgba(36,31,24,0.66); margin: 0 0 24px; }
 
   .field { margin-bottom: 20px; }
-  .field label { display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; color: var(--green-soft); margin-bottom: 7px; }
+  .field label { display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; color: var(--navy); margin-bottom: 7px; }
   .field .hint { font-weight: 400; color: rgba(36,31,24,0.5); letter-spacing: 0; }
-  input[type="text"], input[type="date"], input[type="number"], textarea {
+  input[type="text"], input[type="date"], input[type="number"], select, textarea {
     width: 100%;
-    font-family: "Mulish", sans-serif;
+    font-family: var(--body);
     font-size: 16px;
     color: var(--ink);
     background: var(--field);
@@ -93,11 +66,12 @@
     padding: 12px 14px;
   }
   textarea { resize: vertical; min-height: 76px; }
-  input:focus, textarea:focus { outline: none; border-color: var(--brass); box-shadow: 0 0 0 3px rgba(181,133,60,0.18); }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(27,42,74,0.16); }
+  select { appearance: auto; }
 
   .row { display: flex; gap: 14px; }
   .row .field { flex: 1; }
-  .row .field.state { flex: 0 0 96px; }
+  .row .field.state { flex: 0 0 160px; }
 
   .checks { display: flex; flex-wrap: wrap; gap: 10px; }
   .check {
@@ -110,7 +84,7 @@
     font-size: 15px;
     user-select: none;
   }
-  .check input { accent-color: var(--green-soft); width: 16px; height: 16px; }
+  .check input { accent-color: var(--navy); width: 16px; height: 16px; }
   .check.on { border-color: var(--brass); background: #FBEFD6; }
 
   /* Honeypot, hidden from people, visible to bots */
@@ -119,66 +93,74 @@
   .submit {
     width: 100%;
     margin-top: 6px;
-    background: var(--brass);
-    color: #1a1208;
-    font-family: "Mulish", sans-serif;
+    background: var(--navy);
+    color: var(--ivory);
+    font-family: var(--body);
     font-weight: 700;
     font-size: 16px;
     border: none;
-    border-radius: 3px;
+    border-radius: 999px;
     padding: 16px;
     cursor: pointer;
     transition: background 0.18s ease;
   }
-  .submit:hover { background: var(--brass-light); }
-  .submit:focus-visible { outline: 3px solid var(--green-soft); outline-offset: 2px; }
+  .submit:hover { background: var(--navy-soft); }
+  .submit:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
   .submit:disabled { opacity: 0.55; cursor: default; }
 
   /* Coverage */
   .coverage { padding: 56px 0 0; }
-  .coverage h2 { font-family: "Amiri", serif; font-weight: 700; font-size: 26px; color: var(--green-soft); margin: 0 0 4px; }
+  .coverage h2 { font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--navy); margin: 0 0 4px; }
   .coverage .sub { font-size: 15px; color: rgba(36,31,24,0.6); margin: 0 0 22px; }
+  .cov-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+  .refresh {
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--body); font-size: 14px; font-weight: 700; color: var(--navy);
+    background: transparent; border: 1px solid rgba(27,42,74,0.3); border-radius: 999px;
+    padding: 8px 14px; cursor: pointer;
+  }
+  .refresh:hover { border-color: var(--navy); }
+  .refresh:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+  .refresh svg { width: 15px; height: 15px; }
+  .refresh.spin svg { animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .updated { font-size: 12px; color: rgba(36,31,24,0.55); margin: -14px 0 18px; }
 
   .feeding { padding: 20px 0; border-bottom: 1px solid var(--line); }
   .feeding:first-of-type { border-top: 1px solid var(--line); }
   .f-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-  .f-where { font-family: "Amiri", serif; font-weight: 700; font-size: 20px; color: var(--green-soft); margin: 0; }
-  .f-date { font-size: 13px; letter-spacing: 0.04em; color: var(--brass); white-space: nowrap; }
+  .f-where { font-family: var(--display); font-weight: 700; font-size: 20px; color: var(--navy); margin: 0; }
+  .f-date { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; color: var(--terra); white-space: nowrap; }
   .f-memory { font-size: 14px; color: rgba(36,31,24,0.66); margin: 4px 0 0; }
   .f-memory b { color: var(--ink); font-weight: 700; }
   .f-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
-  .tag { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: var(--green-soft); background: var(--plaster-deep); border-radius: 999px; padding: 4px 12px; }
-  .f-note { font-family: "Amiri", serif; font-style: italic; font-size: 17px; color: var(--ink); margin: 12px 0 0; }
+  .tag { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: var(--navy); background: var(--ivory-deep); border-radius: 999px; padding: 4px 12px; }
+  .f-note { font-family: var(--display); font-style: italic; font-size: 17px; color: var(--ink); margin: 12px 0 0; }
   .f-count { font-size: 13px; color: rgba(36,31,24,0.55); margin-top: 8px; }
   .empty { color: rgba(36,31,24,0.55); font-style: italic; padding: 8px 0; }
-
-  footer { background: var(--green); color: rgba(240,233,220,0.62); text-align: center; padding: 40px 0 52px; margin-top: 64px; border-top: 1px solid rgba(217,174,99,0.22); }
-  footer p { font-size: 13px; margin: 0 0 6px; }
-  footer .ar { font-family: "Amiri", serif; font-size: 17px; color: var(--brass-light); margin-bottom: 14px; }
-
-  a { color: var(--brass); }
 
   @media (max-width: 540px) {
     .row { flex-direction: column; gap: 0; }
     .row .field.state { flex-basis: auto; }
   }
+
 </style>
 </head>
 <body>
 
   <div class="topbar">
     <div class="wrap">
-      <a class="back" href="playbook.html">← The playbook</a>
-      <span class="ar">دار نجاة</span>
+      <a class="brand" href="./"><img src="mark-on-navy.svg" alt=""><span>DAR NAJAT</span></a>
+      <nav class="nav" aria-label="Main">
+        <a href="playbook.html">Playbook</a>
+        <a href="log.html" aria-current="page">Log</a>
+      </nav>
     </div>
   </div>
 
   <header class="hero">
     <div class="wrap">
-      <svg class="star" viewBox="0 0 100 100" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3">
-        <rect x="22" y="22" width="56" height="56"/>
-        <rect x="22" y="22" width="56" height="56" transform="rotate(45 50 50)"/>
-      </svg>
+      <img class="mark" src="mark-on-navy.svg" alt="">
       <p class="eyebrow">Log a feeding</p>
       <h1>Mark what you gave</h1>
       <p>A minute of recording keeps the house standing. Nothing here names the people you served.</p>
@@ -202,18 +184,23 @@
 
           <div class="field">
             <label for="location_label">Where <span class="hint">— a block, park, or intersection. Keep it rough, never where someone sleeps.</span></label>
-            <input type="text" id="location_label" name="location_label" maxlength="200" placeholder="e.g. Echo Park lake path" required>
+            <input type="text" id="location_label" name="location_label" maxlength="200" placeholder="e.g. Esther Short Park, east side" required>
           </div>
 
           <div class="row">
             <div class="field">
               <label for="city">City <span class="hint">(optional)</span></label>
-              <input type="text" id="city" name="city" maxlength="100" placeholder="Los Angeles">
+              <input type="text" id="city" name="city" maxlength="100" placeholder="Vancouver">
             </div>
             <div class="field state">
-              <label for="state">State <span class="hint">(optional)</span></label>
-              <input type="text" id="state" name="state" maxlength="2" placeholder="CA">
+              <label for="state">State or region <span class="hint">(optional)</span></label>
+              <input type="text" id="state" name="state" maxlength="100" placeholder="WA">
             </div>
+          </div>
+
+          <div class="field">
+            <label for="country">Country</label>
+            <select id="country" name="country"><option value="US">United States</option></select>
           </div>
 
           <div class="field">
@@ -237,8 +224,8 @@
           </div>
 
           <div class="field">
-            <label for="note">A note <span class="hint">(optional, public). What happened, who you met. No last names.</span></label>
-            <textarea id="note" name="note" maxlength="500" placeholder="Met a man named Earl near the bridge. Gave him socks and a hot meal."></textarea>
+            <label for="note">A note <span class="hint">(optional, public). What happened and what ran out. Don't name or describe the people you served.</span></label>
+            <textarea id="note" name="note" maxlength="500" placeholder="Cold night. Socks and hot soup went first. Bring more gloves next time."></textarea>
           </div>
 
           <div class="hp" aria-hidden="true">
@@ -250,8 +237,17 @@
       </div>
 
       <section class="coverage">
-        <h2>Recent feedings</h2>
-        <p class="sub">Every entry is a corner someone cared for, in a name worth remembering.</p>
+        <div class="cov-head">
+          <div>
+            <h2>Recent feedings</h2>
+            <p class="sub">Every entry is a corner someone cared for, in a name worth remembering.</p>
+          </div>
+          <button type="button" class="refresh" id="refresh" aria-label="Refresh recent feedings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+            Refresh
+          </button>
+        </div>
+        <p class="updated" id="updated" aria-live="polite"></p>
         <div id="list"><p class="empty">Loading…</p></div>
       </section>
 
@@ -259,7 +255,8 @@
   </main>
 
   <footer>
-    <p class="ar">دار نجاة</p>
+    <img src="mark-on-navy-deep.svg" alt="">
+    <p class="ar" lang="ar" dir="rtl">دار نجاة</p>
     <p>Built in memory of Najat Ihsane.</p>
     <p>Meant to be carried by many hands.</p>
   </footer>
@@ -284,6 +281,31 @@
     var form = document.getElementById("form");
     var submitBtn = document.getElementById("submit");
     var listEl = document.getElementById("list");
+    var refreshBtn = document.getElementById("refresh");
+    var updatedEl = document.getElementById("updated");
+
+    // Country list from the browser's own region names (no extra library).
+    // Stored as the two-letter ISO code so the data works anywhere in the world.
+    var COUNTRY_CODES = "AD AE AF AG AI AL AM AO AR AS AT AU AW AZ BA BB BD BE BF BG BH BI BJ BM BN BO BR BS BT BW BY BZ CA CD CF CG CH CI CL CM CN CO CR CU CV CY CZ DE DJ DK DM DO DZ EC EE EG ER ES ET FI FJ FM FR GA GB GD GE GH GM GN GQ GR GT GU GW GY HK HN HR HT HU ID IE IL IN IQ IR IS IT JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MG MH MK ML MM MN MO MR MT MU MV MW MX MY MZ NA NE NG NI NL NO NP NR NZ OM PA PE PG PH PK PL PR PS PT PW PY QA RO RS RU RW SA SB SC SD SE SG SI SK SL SM SN SO SR SS ST SV SY SZ TD TG TH TJ TL TM TN TO TR TT TV TW TZ UA UG US UY UZ VA VC VE VI VN VU WS XK YE ZA ZM ZW".split(" ");
+    var regionName = function (c) { return c; };
+    try {
+      var dn = new Intl.DisplayNames(["en"], { type: "region" });
+      regionName = function (c) { try { return dn.of(c) || c; } catch (e) { return c; } };
+    } catch (e) {}
+    (function fillCountries() {
+      var sel = document.getElementById("country");
+      sel.innerHTML = "";
+      COUNTRY_CODES
+        .map(function (c) { return { code: c, name: regionName(c) }; })
+        .sort(function (a, b) { return a.name.localeCompare(b.name); })
+        .forEach(function (o) {
+          var opt = document.createElement("option");
+          opt.value = o.code;
+          opt.textContent = o.name;
+          if (o.code === "US") opt.selected = true;
+          sel.appendChild(opt);
+        });
+    })();
 
     // Default the date to today, in local time.
     var now = new Date();
@@ -312,7 +334,7 @@
     // Sample data for demo mode so the page is real to look at.
     var demo = [
       { feeding_date: "2026-06-28", location_label: "MacArthur Park, west side", city: "Los Angeles", state: "CA", in_memory_of: "Najat Ihsane", items: ["Meals", "Water", "Socks"], people_count: 18, note: "First feeding on her day. Eighteen plates, every one given with her name said out loud." },
-      { feeding_date: "2026-06-21", location_label: "Under the 5th St bridge", city: "Austin", state: "TX", in_memory_of: "Frank DeLuca", items: ["Hygiene kits", "Water"], people_count: 9, note: "Met a man named Earl. He asked us to come back Thursdays." },
+      { feeding_date: "2026-06-21", location_label: "Near the waterfront path", city: "Vancouver", state: "WA", country: "US", in_memory_of: "A loved one", items: ["Hygiene kits", "Water"], people_count: 9, note: "Water ran out first. Bring more next time." },
       { feeding_date: "2026-06-14", location_label: "Pioneer Courthouse Square", city: "Portland", state: "OR", in_memory_of: "Najat Ihsane", items: ["Meals", "Socks"], people_count: 24, note: "" }
     ];
 
@@ -345,6 +367,7 @@
         var place = r.location_label || "Somewhere";
         if (r.city) place += ", " + r.city;
         if (r.state) place += ", " + r.state;
+        if (r.country && r.country !== "US") place += ", " + regionName(r.country);
         where.textContent = place;
         var date = document.createElement("span");
         date.className = "f-date";
@@ -393,8 +416,13 @@
       });
     }
 
+    function stamp() {
+      updatedEl.textContent = "Updated " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    }
+
     async function loadList() {
-      if (!LIVE || !client) { renderList(demo); return; }
+      if (!LIVE) { renderList(demo); stamp(); return; }
+      if (!client) { renderList([]); return; }
       try {
         var res = await client
           .from("feedings")
@@ -403,6 +431,7 @@
           .limit(50);
         if (res.error) throw res.error;
         renderList(res.data);
+        stamp();
       } catch (err) {
         showBanner("err", "Couldn't load the coverage list. " + (err.message || ""));
         renderList([]);
@@ -433,7 +462,12 @@
         feeding_date: form.feeding_date.value,
         location_label: location,
         city: form.city.value.trim() || null,
-        state: form.state.value.trim().toUpperCase() || null,
+        state: (function () {
+          var v = form.state.value.trim();
+          if (!v) return null;
+          return (form.country.value === "US" && v.length === 2) ? v.toUpperCase() : v;
+        })(),
+        country: form.country.value || "US",
         in_memory_of: form.in_memory_of.value.trim() || "Najat Ihsane",
         items: items,
         people_count: form.people_count.value ? parseInt(form.people_count.value, 10) : null,
@@ -474,6 +508,14 @@
       submitBtn.disabled = false;
       submitBtn.textContent = "Log this feeding";
       window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    refreshBtn.addEventListener("click", async function () {
+      refreshBtn.classList.add("spin");
+      refreshBtn.disabled = true;
+      await loadList();
+      refreshBtn.classList.remove("spin");
+      refreshBtn.disabled = false;
     });
 
     loadList();

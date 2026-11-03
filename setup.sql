@@ -62,3 +62,13 @@ alter table public.feedings
 alter table public.feedings drop constraint if exists feedings_state_check;
 alter table public.feedings
   add constraint feedings_state_check check (state is null or char_length(state) <= 100);
+
+-- ---------------------------------------------------------------------
+-- 2026-11 update: hide an entry from the public site.
+-- Tick "hidden" on a row in the Supabase Table Editor and it disappears
+-- from the log list, the counts, and "Remembered here". Nothing is deleted.
+-- ---------------------------------------------------------------------
+alter table public.feedings
+  add column if not exists hidden boolean not null default false;
+alter policy "public can read feedings" on public.feedings using (hidden = false);
+alter policy "public can insert feedings" on public.feedings with check (hidden = false);

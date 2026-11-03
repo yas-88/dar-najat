@@ -76,8 +76,9 @@
 
   .row { display: flex; gap: 14px; align-items: flex-end; }
   .row .field label { white-space: nowrap; }
-  .row .field { flex: 1; }
-  .row .field.state { flex: 0 0 200px; }
+  .row .field { flex: 1 1 0; }
+  .row .field.state { flex: 1 1 0; min-width: 0; }
+  .row .field { min-width: 0; }
 
   .checks { display: flex; flex-wrap: wrap; gap: 10px; }
   .check {
@@ -166,13 +167,15 @@
     border: 0; border-radius: 999px; padding: 14px 24px; cursor: pointer;
   }
   .invite-btn:focus-visible { outline: 3px solid var(--ivory); outline-offset: 3px; }
+  .invite-ghost { background: transparent; color: var(--gold); box-shadow: inset 0 0 0 2px var(--gold); }
+  .card-out img { display: block; width: 100%; max-width: 360px; border-radius: 12px; margin-top: 18px; }
+  .invite .card-hint { font-size: 14px; color: var(--gold); margin-top: 8px; }
   .invite-sec { color: var(--gold); font-weight: 700; font-size: 15px; }
   .invite .invite-copy { font-size: 14px; margin-top: 10px; color: var(--gold); }
   .invite .invite-copy:empty { display: none; }
 
   @media (max-width: 540px) {
-    .row { flex-direction: column; gap: 0; }
-    .row .field.state { flex-basis: auto; }
+    .row { gap: 10px; }
   }
 
 </style>
@@ -207,8 +210,13 @@
         <p class="invite-k">Logged. Thank you.</p>
         <h2>Bring someone next time</h2>
         <p>Send the playbook to one person who might come with you next time.</p>
+        <div class="card-out">
+          <img id="card-img" alt="" hidden>
+          <p class="card-hint" id="card-hint" hidden>Press and hold the image to save it, then post it anywhere.</p>
+        </div>
         <div class="invite-row">
-          <button type="button" class="invite-btn" id="share">Invite someone</button>
+          <button type="button" class="invite-btn" id="share-card">Share a card</button>
+          <button type="button" class="invite-btn invite-ghost" id="share">Invite someone</button>
           <a class="invite-sec" href="dar-najat-days.ics">Remind me on her two days</a>
         </div>
         <p class="invite-copy" id="copy-status" aria-live="polite"></p>
@@ -551,7 +559,7 @@
           if (res.error) throw res.error;
           banner.className = "banner hide";
           rememberMine(payload);
-          showInvite();
+          showInvite(payload);
           await loadList();
         } catch (err) {
           showBanner("err", "Couldn't save. " + (err.message || "Try again."));
@@ -592,10 +600,78 @@
       text: "I just fed someone in a loved one's name with Dar Najat. Want to do the next one with me? The playbook takes five minutes to read.",
       url: "https://charity.safjob.com/playbook.html"
     };
-    function showInvite() {
+    var lastLogged = null;
+    function showInvite(p) {
+      lastLogged = p || lastLogged;
       invite.hidden = false;
       copyStatus.textContent = "";
+      document.getElementById("card-img").hidden = true;
+      document.getElementById("card-hint").hidden = true;
     }
+
+    // ---- "In memory of" card: a square image people can post
+    function loadImg(src) {
+      return new Promise(function (ok, bad) { var i = new Image(); i.onload = function () { ok(i); }; i.onerror = bad; i.src = src; });
+    }
+    function wrapText(ctx, text, maxW) {
+      var words = text.split(" "), lines = [], line = "";
+      words.forEach(function (w) {
+        var t = line ? line + " " + w : w;
+        if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; } else { line = t; }
+      });
+      if (line) lines.push(line);
+      return lines;
+    }
+    async function makeCard(p) {
+      var S = 1080, c = document.createElement("canvas"); c.width = S; c.height = S;
+      var x = c.getContext("2d");
+      try { await Promise.all([document.fonts.load('700 80px "Amiri"'), document.fonts.load('800 40px "Mulish"'), document.fonts.load('600 32px "Mulish"')]); } catch (e) {}
+      x.fillStyle = "#1B2A4A"; x.fillRect(0, 0, S, S);
+      x.strokeStyle = "#E2C488"; x.lineWidth = 6; x.strokeRect(40, 40, S - 80, S - 80);
+      try { var m = await loadImg("mark-on-navy.svg"); x.drawImage(m, S / 2 - 130, 90, 260, 260); } catch (e) {}
+      x.textAlign = "center";
+      var head = p.people_count ? "Fed " + p.people_count + (p.people_count === 1 ? " person" : " people") :
+        "Gave " + (p.items || []).map(function (i) { return i.toLowerCase(); }).join(", ").replace(/, ([^,]*)$/, " and $1");
+      x.fillStyle = "#E2C488"; x.font = '800 64px "Mulish", sans-serif';
+      x.fillText(head, S / 2, 450);
+      x.fillStyle = "rgba(240,233,220,0.8)"; x.font = 'italic 400 44px "Amiri", serif';
+      x.fillText("in memory of", S / 2, 530);
+      x.fillStyle = "#F0E9DC"; x.font = '700 92px "Amiri", serif';
+      var lines = wrapText(x, p.in_memory_of || "a loved one", S - 200).slice(0, 2);
+      lines.forEach(function (l, i) { x.fillText(l, S / 2, 640 + i * 100); });
+      var y = 640 + lines.length * 100 + 10;
+      var place = [p.city, p.state].filter(Boolean).join(", ");
+      var when = fmtDate(p.feeding_date);
+      x.fillStyle = "rgba(240,233,220,0.7)"; x.font = '600 34px "Mulish", sans-serif';
+      x.fillText([when, place].filter(Boolean).join("  ·  "), S / 2, y);
+      x.fillStyle = "#E2C488"; x.fillRect(S / 2 - 60, S - 210, 120, 4);
+      x.fillStyle = "#F0E9DC"; x.font = '800 34px "Mulish", sans-serif';
+      x.fillText("Feed someone in a loved one\u2019s name", S / 2, S - 150);
+      x.fillStyle = "#E2C488"; x.font = '700 32px "Mulish", sans-serif';
+      x.fillText("charity.safjob.com", S / 2, S - 100);
+      return new Promise(function (ok) { c.toBlob(function (b) { ok(b); }, "image/png"); });
+    }
+    document.getElementById("share-card").addEventListener("click", async function () {
+      if (!lastLogged) return;
+      var btn = this; btn.disabled = true; btn.textContent = "Making your card…";
+      try {
+        var blob = await makeCard(lastLogged);
+        var file = new File([blob], "dar-najat.png", { type: "image/png" });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try { await navigator.share({ files: [file], text: "Fed someone in memory of " + (lastLogged.in_memory_of || "a loved one") + ". https://charity.safjob.com" }); }
+          catch (e) {}
+        } else {
+          var img = document.getElementById("card-img");
+          img.src = URL.createObjectURL(blob);
+          img.alt = "Card: in memory of " + (lastLogged.in_memory_of || "a loved one");
+          img.hidden = false;
+          document.getElementById("card-hint").hidden = false;
+        }
+      } catch (e) {
+        copyStatus.textContent = "Couldn't make the card on this device.";
+      }
+      btn.disabled = false; btn.textContent = "Share a card";
+    });
     document.getElementById("share").addEventListener("click", async function () {
       if (navigator.share) {
         try { await navigator.share(SHARE); return; } catch (e) { if (e && e.name === "AbortError") return; }

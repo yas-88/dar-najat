@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Flyer · Dar Najat</title>
+<meta name="description" content="A printable flyer for Dar Najat: feed someone in a loved one's name.">
+<meta name="theme-color" content="#1B2A4A">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<style>
+  .bar { padding-block: 24px 8px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+  .bar p { margin: 0; font-size: 15px; color: var(--muted); max-width: 44ch; }
+  .print-btn { font-family: var(--body); font-weight: 800; font-size: 15px; border: 0; border-radius: 999px; padding: 12px 22px; background: var(--navy); color: var(--ivory); cursor: pointer; }
+  .print-btn:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+
+  /* The flyer itself: a letter page, scaled to fit the screen */
+  .sheet-wrap { padding-block: 16px 56px; }
+  .sheet {
+    background: #fff; color: var(--ink); width: 100%; max-width: 680px; aspect-ratio: 8.5 / 11; margin: 0 auto;
+    box-shadow: 0 10px 30px rgba(19, 30, 54, 0.18); border-radius: 4px;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding: 6% 8% 5%; container-type: inline-size;
+  }
+  .f-mark { width: 22cqw; height: auto; }
+  .f-ar { font-family: var(--display); font-size: 5.4cqw; color: var(--brass); margin: 2.4cqw 0 0; line-height: 1.1; }
+  .f-name { font-weight: 800; letter-spacing: 0.16em; font-size: 3.4cqw; color: var(--navy); margin: 0.8cqw 0 0; }
+  .f-head { font-family: var(--display); font-weight: 700; font-size: 8.4cqw; line-height: 1.05; color: var(--navy); margin: 4.5cqw 0 0; text-wrap: balance; }
+  .f-sub { font-size: 3.1cqw; line-height: 1.45; margin: 2.6cqw 0 0; max-width: 34ch; color: #3a332a; }
+  .f-steps { list-style: none; padding: 0; margin: 4.4cqw 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 3cqw; width: 100%; text-align: left; }
+  .f-steps li { border-top: 0.5cqw solid var(--terra); padding-top: 1.8cqw; }
+  .f-steps b { display: block; font-family: var(--display); font-size: 4.2cqw; color: var(--navy); line-height: 1.1; }
+  .f-steps span { display: block; font-size: 2.5cqw; line-height: 1.4; color: #3a332a; margin-top: 0.8cqw; }
+  .f-qr { margin-top: auto; display: flex; align-items: center; gap: 4cqw; text-align: left; }
+  .f-qr img { width: 24cqw; height: 24cqw; display: block; }
+  .f-qr .scan { font-weight: 800; font-size: 3.3cqw; color: var(--navy); margin: 0; line-height: 1.25; }
+  .f-qr .url { font-size: 2.6cqw; color: #3a332a; margin: 1cqw 0 0; }
+  .f-foot { font-size: 2.2cqw; color: #6a5f50; margin: 3.4cqw 0 0; }
+
+  @page { size: letter; margin: 0; }
+  @media print {
+    html, body { background: #fff !important; }
+    body > *:not(.sheet-wrap) { display: none !important; }
+    html, body { height: auto; overflow: hidden; }
+    .sheet-wrap { padding: 0 !important; }
+    .sheet-wrap .wrap { padding: 0 !important; max-width: none; }
+    .sheet { box-shadow: none; border-radius: 0; max-width: none; width: 8.5in; height: 10.95in; aspect-ratio: auto; break-after: avoid; page-break-after: avoid; padding: 0.6in 0.7in 0.5in; }
+  }
+</style>
+</head>
+<body id="top">
+
+  <div class="topbar">
+    <div class="wrap">
+      <a class="brand" href="./"><img src="mark-small.svg" alt=""><span>DAR NAJAT</span></a>
+      <nav class="nav" aria-label="Main">
+        <a href="playbook.html">Playbook</a>
+        <a href="log.html">Log</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="wrap bar">
+    <p>Print this and post it at your mosque, church, library, or community board. The QR code opens the playbook.</p>
+    <button type="button" class="print-btn" id="print">Print the flyer</button>
+  </div>
+
+  <div class="sheet-wrap">
+    <div class="wrap">
+      <article class="sheet" aria-label="Flyer">
+        <img class="f-mark" src="mark-on-ivory.svg" alt="Dar Najat mark">
+        <p class="f-ar" lang="ar" dir="rtl">دار نجاة</p>
+        <p class="f-name">DAR NAJAT</p>
+        <h1 class="f-head">Feed someone in a loved one’s name.</h1>
+        <p class="f-sub">Anyone can do this, alone or with a few friends, in an afternoon. A short playbook shows you how.</p>
+        <ol class="f-steps">
+          <li><b>Read</b><span>The five-step playbook: what to bring and how to serve with dignity.</span></li>
+          <li><b>Give</b><span>A meal, water, socks, or a care kit, in the name of someone you miss.</span></li>
+          <li><b>Log it</b><span>So the next person knows that corner was cared for.</span></li>
+        </ol>
+        <div class="f-qr">
+          <img src="qr-playbook.svg" alt="QR code linking to charity.safjob.com/playbook.html">
+          <div>
+            <p class="scan">Scan to open<br>the playbook</p>
+            <p class="url">charity.safjob.com/playbook</p>
+          </div>
+        </div>
+        <p class="f-foot">Dar Najat was founded in memory of Najat Ihsane. Open to everyone.</p>
+      </article>
+    </div>
+  </div>
+
+  <footer>
+    <a class="home-link" href="./" aria-label="Home"><img src="mark-small.svg" alt=""><span>Home</span></a>
+    <p class="ar" lang="ar" dir="rtl">دار نجاة</p>
+    <p>Built in memory of Najat Ihsane.</p>
+    <p>Meant to be carried by many hands.</p>
+  </footer>
+
+  <script>document.getElementById("print").addEventListener("click", function () { window.print(); });</script>
+  <script src="ptr.js"></script>
+</body>
+</html>

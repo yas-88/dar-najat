@@ -51,6 +51,7 @@
   .today { padding-block: 40px 8px; }
   .today-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
   .today-date { font-family: var(--display); font-weight: 700; font-size: clamp(24px, 5vw, 30px); line-height: 1.15; color: var(--navy); margin: 0; }
+  .today-time { font-family: var(--display); font-weight: 700; font-size: clamp(20px, 4vw, 24px); color: var(--terra); margin: 4px 0 0; font-variant-numeric: tabular-nums; }
   .today-place { font-size: 14px; color: var(--muted); margin: 6px 0 0; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; }
   .linkish { font: inherit; font-weight: 700; color: var(--terra); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
   .refresh {
@@ -165,6 +166,7 @@
       <div class="today-head">
         <div>
           <h2 class="today-date" id="today-date">&nbsp;</h2>
+          <p class="today-time" id="today-time" aria-live="off"></p>
           <p class="today-place"><span id="place">Vancouver, WA</span><button type="button" class="linkish" id="use-loc">Use my location</button></p>
         </div>
         <button type="button" class="refresh" id="t-refresh" aria-label="Refresh today's weather and counts">
@@ -291,6 +293,7 @@
     function paintDate() {
       var now = new Date();
       $("today-date").textContent = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+      paintTime();
       var y = now.getFullYear(), today = new Date(y, now.getMonth(), now.getDate());
       var anchors = [
         { m: 9, d: 14, what: "her birthday" },
@@ -309,6 +312,15 @@
         $("anchor-t").textContent = "until " + next.what + ", " + next.t.toLocaleDateString("en-US", { month: "long", day: "numeric" });
       }
     }
+
+    function paintTime() {
+      $("today-time").textContent = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    }
+    // Keep the clock current; repaint the date too in case midnight passes.
+    setInterval(function () {
+      var d = new Date();
+      if (d.getSeconds() < 31) paintDate(); else paintTime();
+    }, 30000);
 
     // ---- Weather
     function sky(code) {

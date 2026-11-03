@@ -65,14 +65,19 @@
     border-radius: 3px;
     padding: 12px 14px;
   }
+  input[type="text"], input[type="date"], input[type="number"], select { height: 48px; line-height: 1.2; }
   textarea { resize: vertical; min-height: 76px; }
+  /* iPhone Safari gives date fields their own minimum width and centered text; match the other fields */
+  input[type="date"] { -webkit-appearance: none; appearance: none; display: block; min-width: 0; max-width: 100%; min-height: 48px; text-align: left; }
+  input[type="date"]::-webkit-date-and-time-value { text-align: left; margin: 0; }
   input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(27,42,74,0.16); }
   select { appearance: auto; }
   select[hidden], input[hidden] { display: none; }
 
-  .row { display: flex; gap: 14px; }
+  .row { display: flex; gap: 14px; align-items: flex-end; }
+  .row .field label { white-space: nowrap; }
   .row .field { flex: 1; }
-  .row .field.state { flex: 0 0 160px; }
+  .row .field.state { flex: 0 0 200px; }
 
   .checks { display: flex; flex-wrap: wrap; gap: 10px; }
   .check {
@@ -230,7 +235,7 @@
               <input type="text" id="city" name="city" maxlength="100" placeholder="Vancouver">
             </div>
             <div class="field state">
-              <label for="state">State or region <span class="hint">(optional)</span></label>
+              <label for="state_us" id="state-label">State <span class="hint">(optional)</span></label>
               <select id="state_us" name="state_us" aria-label="State"><option value="">Choose a state</option></select>
               <input type="text" id="state" name="state" maxlength="100" placeholder="Region or province" hidden>
             </div>
@@ -348,6 +353,9 @@
     function syncState() {
       var us = document.getElementById("country").value === "US";
       stateSel.hidden = !us; stateTxt.hidden = us;
+      var lab = document.getElementById("state-label");
+      lab.firstChild.nodeValue = us ? "State " : "Region ";
+      lab.setAttribute("for", us ? "state_us" : "state");
     }
 
     (function fillCountries() {

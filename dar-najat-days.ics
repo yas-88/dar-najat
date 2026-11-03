@@ -1,0 +1,41 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Dar Najat//charity.safjob.com//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Dar Najat
+BEGIN:VEVENT
+UID:dar-najat-birthday@charity.safjob.com
+DTSTAMP:20261103T170000Z
+DTSTART;VALUE=DATE:20271014
+DTEND;VALUE=DATE:20271015
+RRULE:FREQ=YEARLY
+SUMMARY:Dar Najat: feed someone in her name (her birthday)
+DESCRIPTION:14 October\, Najat Ihsane's birthday. Run a feeding in a loved 
+ one's name: https://charity.safjob.com/playbook.html
+URL:https://charity.safjob.com/playbook.html
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow is a day to feed someone in her name.
+TRIGGER:-PT15H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:dar-najat-passing@charity.safjob.com
+DTSTAMP:20261103T170000Z
+DTSTART;VALUE=DATE:20270628
+DTEND;VALUE=DATE:20270629
+RRULE:FREQ=YEARLY
+SUMMARY:Dar Najat: feed someone in her name (the day she passed)
+DESCRIPTION:28 June\, the day Najat Ihsane passed. Run a feeding in a loved
+  one's name: https://charity.safjob.com/playbook.html
+URL:https://charity.safjob.com/playbook.html
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow is a day to feed someone in her name.
+TRIGGER:-PT15H
+END:VALARM
+END:VEVENT
+END:VCALENDAR

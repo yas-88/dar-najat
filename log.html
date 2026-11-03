@@ -139,6 +139,20 @@
   .f-count { font-size: 13px; color: rgba(36,31,24,0.55); margin-top: 8px; }
   .empty { color: rgba(36,31,24,0.55); font-style: italic; padding: 8px 0; }
 
+  .invite { background: var(--navy); color: var(--ivory); border-radius: 16px; padding: 24px; margin-bottom: 26px; }
+  .invite .invite-k { font-size: 12px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin: 0 0 6px; }
+  .invite h2 { font-family: var(--display); font-weight: 700; font-size: 26px; line-height: 1.2; margin: 0 0 8px; color: var(--ivory); }
+  .invite p { margin: 0; color: var(--on-navy); font-size: 16px; }
+  .invite-row { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin-top: 18px; }
+  .invite-btn {
+    font-family: var(--body); font-weight: 800; font-size: 16px; color: var(--navy); background: var(--gold);
+    border: 0; border-radius: 999px; padding: 14px 24px; cursor: pointer;
+  }
+  .invite-btn:focus-visible { outline: 3px solid var(--ivory); outline-offset: 3px; }
+  .invite-sec { color: var(--gold); font-weight: 700; font-size: 15px; }
+  .invite .invite-copy { font-size: 14px; margin-top: 10px; color: var(--gold); }
+  .invite .invite-copy:empty { display: none; }
+
   @media (max-width: 540px) {
     .row { flex-direction: column; gap: 0; }
     .row .field.state { flex-basis: auto; }
@@ -150,7 +164,7 @@
 
   <div class="topbar">
     <div class="wrap">
-      <a class="brand" href="./"><img src="mark-on-navy.svg" alt=""><span>DAR NAJAT</span></a>
+      <a class="brand" href="./"><img src="mark-small.svg" alt=""><span>DAR NAJAT</span></a>
       <nav class="nav" aria-label="Main">
         <a href="playbook.html">Playbook</a>
         <a href="log.html" aria-current="page">Log</a>
@@ -171,6 +185,17 @@
     <div class="wrap">
 
       <div id="banner" class="banner hide"></div>
+
+      <div class="invite" id="invite" hidden>
+        <p class="invite-k">Logged. Thank you.</p>
+        <h2>Bring someone next time</h2>
+        <p>Send the playbook to one person who might come with you next time.</p>
+        <div class="invite-row">
+          <button type="button" class="invite-btn" id="share">Invite someone</button>
+          <a class="invite-sec" href="dar-najat-days.ics">Remind me on her two days</a>
+        </div>
+        <p class="invite-copy" id="copy-status" aria-live="polite"></p>
+      </div>
 
       <div class="card">
         <h2>The details</h2>
@@ -255,7 +280,7 @@
   </main>
 
   <footer>
-    <a class="home-link" href="./" aria-label="Home"><img src="mark-on-navy-deep.svg" alt=""><span>Home</span></a>
+    <a class="home-link" href="./" aria-label="Home"><img src="mark-small.svg" alt=""><span>Home</span></a>
     <p class="ar" lang="ar" dir="rtl">دار نجاة</p>
     <p>Built in memory of Najat Ihsane.</p>
     <p>Meant to be carried by many hands.</p>
@@ -485,7 +510,8 @@
         try {
           var res = await client.from("feedings").insert([payload]);
           if (res.error) throw res.error;
-          showBanner("ok", "Logged. Thank you for feeding someone in their name.");
+          banner.className = "banner hide";
+          showInvite();
           await loadList();
         } catch (err) {
           showBanner("err", "Couldn't save. " + (err.message || "Try again."));
@@ -507,7 +533,7 @@
       });
       submitBtn.disabled = false;
       submitBtn.textContent = "Log this feeding";
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      (invite.hidden ? document.body : invite).scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
     refreshBtn.addEventListener("click", async function () {
@@ -516,6 +542,31 @@
       await loadList();
       refreshBtn.classList.remove("spin");
       refreshBtn.disabled = false;
+    });
+
+    // ---- After logging: invite one more person
+    var invite = document.getElementById("invite");
+    var copyStatus = document.getElementById("copy-status");
+    var SHARE = {
+      title: "Dar Najat",
+      text: "I just fed someone in a loved one's name with Dar Najat. Want to do the next one with me? The playbook takes five minutes to read.",
+      url: "https://charity.safjob.com/playbook.html"
+    };
+    function showInvite() {
+      invite.hidden = false;
+      copyStatus.textContent = "";
+    }
+    document.getElementById("share").addEventListener("click", async function () {
+      if (navigator.share) {
+        try { await navigator.share(SHARE); return; } catch (e) { if (e && e.name === "AbortError") return; }
+      }
+      var msg = SHARE.text + " " + SHARE.url;
+      try {
+        await navigator.clipboard.writeText(msg);
+        copyStatus.textContent = "Invite copied. Paste it into a text or email.";
+      } catch (e) {
+        copyStatus.textContent = msg;
+      }
     });
 
     window.darRefresh = loadList;  // pull to refresh reloads the list in place

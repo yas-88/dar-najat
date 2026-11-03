@@ -9,7 +9,7 @@
   var el = document.createElement("div");
   el.className = "ptr";
   el.setAttribute("aria-hidden", "true");
-  el.innerHTML = '<img src="mark-on-navy.svg" alt="">';
+  el.innerHTML = '<img src="mark-small.svg" alt="">';
   document.body.appendChild(el);
 
   var live = document.createElement("p");
@@ -68,3 +68,10 @@
     if (pull >= THRESHOLD * 0.5 + 20) run(); else reset();
   });
 })();
+
+/* Save the site for use without signal (see sw.js). */
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  });
+}

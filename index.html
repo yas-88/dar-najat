@@ -108,6 +108,17 @@
   }
   .day-note { margin: 0; }
 
+  .cal { margin-top: 26px; display: grid; gap: 8px; justify-items: start; }
+  .cal-btn {
+    display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+    background: var(--navy); color: var(--ivory); font-weight: 800; font-size: 15px;
+    padding: 13px 22px; border-radius: 999px;
+  }
+  .cal-btn:hover { background: var(--navy-soft); }
+  .cal-btn:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+  .cal-note { font-size: 14px; color: var(--muted); margin: 0; }
+  .tile a { color: var(--gold); font-weight: 700; font-size: 13px; }
+
   @media (max-width: 540px) {
     .day { flex-direction: column; gap: 6px; }
     .day-date { flex-basis: auto; }
@@ -119,7 +130,7 @@
 
   <div class="topbar">
     <div class="wrap">
-      <a class="brand" href="./" aria-current="page"><img src="mark-on-navy.svg" alt=""><span>DAR NAJAT</span></a>
+      <a class="brand" href="./" aria-current="page"><img src="mark-small.svg" alt=""><span>DAR NAJAT</span></a>
       <nav class="nav" aria-label="Main">
         <a href="playbook.html">Playbook</a>
         <a href="log.html">Log</a>
@@ -134,7 +145,7 @@
       <p class="name-ar reveal" lang="ar" dir="rtl">نجاة إحسان</p>
       <h1 class="name reveal">Najat Ihsane</h1>
       <p class="dates reveal">14 October 1958 &ndash; 28 June 2024</p>
-      <p class="thesis reveal">Her name means <b>deliverance</b>. Dar Najat is the house built in it, a place to feed someone who has none.</p>
+      <p class="thesis reveal">Dar Najat is a house built in her name, a place to feed someone who has none.</p>
     </div>
   </header>
 
@@ -162,7 +173,7 @@
       <div class="days7" id="days7" aria-label="Seven-day forecast"></div>
 
       <div class="tiles2">
-        <div class="tile"><span class="n" id="anchor-n">&nbsp;</span><span class="t" id="anchor-t">&nbsp;</span></div>
+        <div class="tile"><span class="n" id="anchor-n">&nbsp;</span><span class="t" id="anchor-t">&nbsp;</span><a href="dar-najat-days.ics">Remind me every year</a></div>
         <div class="tile"><span class="n" id="count-f">&ndash;</span><span class="t" id="count-f-t">feedings logged</span></div>
         <div class="tile"><span class="n" id="count-p">&ndash;</span><span class="t">people fed, about</span></div>
       </div>
@@ -186,12 +197,16 @@
         <div class="days reveal">
           <div class="day">
             <div class="day-date">14 October<span>Her birthday</span></div>
-            <p class="day-note">The day she was born. Mark it by feeding someone, the way she would have fed you.</p>
+            <p class="day-note">The day she was born. Mark it by feeding someone in her name.</p>
           </div>
           <div class="day">
             <div class="day-date">28 June<span>The day she left</span></div>
             <p class="day-note">The day she passed. A meal given on this day turns grief into something that fills a stomach.</p>
           </div>
+        </div>
+        <div class="cal reveal">
+          <a class="cal-btn" href="dar-najat-days.ics">Add both days to my calendar</a>
+          <p class="cal-note">Adds 14 October and 28 June as yearly reminders, with a nudge the day before.</p>
         </div>
       </div>
     </section>
@@ -216,7 +231,7 @@
   </main>
 
   <footer>
-    <a class="home-link" href="#top" aria-label="Back to top"><img src="mark-on-navy-deep.svg" alt=""><span>Back to top</span></a>
+    <a class="home-link" href="#top" aria-label="Back to top"><img src="mark-small.svg" alt=""><span>Back to top</span></a>
     <p class="ar" lang="ar" dir="rtl">دار نجاة</p>
     <p>Built in memory of Najat Ihsane.</p>
     <p>Meant to be carried by many hands.</p>

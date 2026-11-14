@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Car sign · Dar Najat</title>
+<meta name="description" content="A printable sign for a parked car: a code that opens Dar Najat, for people who might feed someone in a loved one's name.">
+<meta name="theme-color" content="#1B2A4A">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<style>
+  .bar { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; justify-content: space-between; padding-block: 26px 18px; }
+  .bar p { margin: 0; font-size: 16px; max-width: 56ch; }
+  .bar ul { margin: 8px 0 0; padding-left: 20px; font-size: 15px; color: var(--muted); }
+  .print-btn { font-family: var(--body); font-weight: 800; font-size: 16px; background: var(--navy); color: var(--ivory); border: 0; border-radius: 999px; padding: 14px 26px; cursor: pointer; }
+  .print-btn:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+  .sheet-wrap { padding: 8px 0 56px; }
+  .sheet { background: #fff; color: #111; box-shadow: 0 10px 40px rgba(19, 30, 54, 0.18); border-radius: 6px; margin: 0 auto 28px; container-type: inline-size; overflow: hidden; }
+  .sheet-k { font-size: 12px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--terra); margin: 0 0 10px; }
+  .sheet { width: 100%; max-width: 860px; aspect-ratio: 11 / 8.5; display: grid; grid-template-columns: 1.08fr 0.92fr; align-items: center; gap: 4cqw; padding: 5cqw 5.5cqw; border: 1.1cqw solid #1B2A4A; }
+  .cs-left { text-align: left; min-width: 0; }
+  .cs-brand { display: flex; align-items: center; gap: 2cqw; margin: 0; }
+  .cs-brand img { width: 11cqw; height: 11cqw; }
+  .cs-brand .ar { font-family: var(--display); font-size: 4.2cqw; color: #AD8530; line-height: 1.1; display: block; }
+  .cs-brand .la { font-weight: 800; letter-spacing: 0.18em; font-size: 2cqw; color: #1B2A4A; display: block; margin-top: 0.4cqw; }
+  .cs-head { font-family: var(--display); font-weight: 700; font-size: 8.6cqw; line-height: 1.02; color: #1B2A4A; margin: 3.4cqw 0 0; text-wrap: balance; }
+  .cs-sub { font-size: 2.7cqw; line-height: 1.35; color: #222; margin: 2.4cqw 0 0; max-width: 24ch; }
+  .cs-foot { font-size: 1.6cqw; color: #555; margin: 3cqw 0 0; }
+  .cs-right { text-align: center; min-width: 0; }
+  .cs-right img { width: 100%; height: auto; display: block; }
+  .cs-scan { font-weight: 800; font-size: 3cqw; color: #9A4F3A; margin: 1cqw 0 0; letter-spacing: 0.02em; }
+  .cs-url { font-weight: 800; font-size: 2.5cqw; color: #1B2A4A; margin: 0.4cqw 0 0; }
+
+  @page { size: letter landscape; margin: 0; }
+  @media print {
+    html, body { background: #fff !important; height: auto; overflow: hidden; }
+    body > *:not(.sheet-wrap) { display: none !important; }
+    .sheet-wrap { padding: 0 !important; }
+    .sheet-wrap .wrap { padding: 0 !important; max-width: none; }
+    .sheet { box-shadow: none; border-radius: 0; max-width: none; width: 11in; height: 8.45in; aspect-ratio: auto; margin: 0; break-after: avoid; page-break-after: avoid; }
+  }
+</style>
+</head>
+<body id="top">
+
+  <div class="topbar">
+    <div class="wrap">
+      <a class="brand" href="./"><img src="mark-small.svg" alt=""><span>DAR NAJAT</span></a>
+      <nav class="nav" aria-label="Main">
+        <a href="./"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg><span>Home</span></a>
+        <a href="playbook.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h10"/></svg><span>Playbook</span></a>
+        <a href="log.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20h14"/><path d="M7 16l9.5-9.5 3 3L10 19H7z"/></svg><span>Log</span></a>
+        <a class="nav-help" href="help.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11h18a9 9 0 0 1-18 0z"/><path d="M9 20.5h6"/><path d="M9.5 3.5c0 1.6 1.2 1.6 1.2 3.2M13.5 3.5c0 1.6 1.2 1.6 1.2 3.2"/></svg><span>Need a meal?</span></a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="wrap wide bar">
+    <div>
+      <p>A sign for a parked car. The code opens Dar Najat for someone who might run a feeding of their own.</p>
+      <ul>
+        <li>Print on letter paper, sideways (landscape). Tape it inside a rear side window, facing out.</li>
+        <li>Keep it clear of the windshield and anything you need to see through while driving.</li>
+      </ul>
+    </div>
+    <button type="button" class="print-btn" id="print">Print the sign</button>
+  </div>
+
+  <div class="sheet-wrap">
+    <div class="wrap wide">
+      <article class="sheet" aria-label="Car sign">
+        <div class="cs-left">
+          <p class="cs-brand"><img src="mark-on-ivory.svg" alt="Dar Najat mark"><span><span class="ar" lang="ar" dir="rtl">دار نجاة</span><span class="la">DAR NAJAT</span></span></p>
+          <h1 class="cs-head">Feed someone in a loved one’s name.</h1>
+          <p class="cs-sub">Anyone can, in one afternoon. A short playbook shows you how.</p>
+          <p class="cs-foot">Founded in memory of Najat Ihsane. Open to everyone.</p>
+        </div>
+        <div class="cs-right">
+          <img src="qr-home.svg" alt="QR code linking to charity.safjob.com">
+          <p class="cs-scan">Scan to start</p>
+          <p class="cs-url">charity.safjob.com</p>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <footer>
+    <a class="home-link" href="./" aria-label="Home"><img src="mark-small.svg" alt=""><span>Home</span></a>
+    <p class="ar" lang="ar" dir="rtl">دار نجاة</p>
+    <p>Built in memory of Najat Ihsane.</p>
+    <p>Meant to be carried by many hands.</p>
+  </footer>
+
+  <script>document.getElementById("print").addEventListener("click", function () { window.print(); });</script>
+  <script src="ptr.js"></script>
+</body>
+</html>

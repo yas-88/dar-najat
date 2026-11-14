@@ -352,7 +352,7 @@
               <p class="rc-line"><b>Work and training:</b> WorkSource job centers in Washington, at <b>esd.wa.gov</b>, or ask 2-1-1</p>
             </div>
             <div class="rc-actions">
-              <button type="button" class="rc-btn" id="rc-print">Print cards</button>
+              <a class="rc-btn" id="rc-print" href="handout.html" style="text-decoration:none">Print cards, English and Spanish</a>
               <button type="button" class="rc-btn rc-ghost" id="rc-show">Show on my phone</button>
             </div>
             <p class="rc-src">211info details from Clark County's resource page and OregonLawHelp; WorkSource from Washington's Employment Security Department. Checked November 2026.</p>
@@ -434,7 +434,7 @@
     <p class="ar" lang="ar" dir="rtl">دار نجاة</p>
     <p>Built in memory of Najat Ihsane.</p>
     <p>Meant to be carried by many hands.</p>
-    <p class="src"><a href="flyer.html" style="color:inherit">Print a flyer to post in your community.</a></p>
+    <p class="src">Print: <a href="handout.html">cards to hand over</a> · <a href="flyer.html">a flyer to post</a> · <a href="car-sign.html">a sign for your car</a></p>
     <p class="src">Food safety guidance follows USDA standards. Care-kit and outreach guidance draws on street outreach organizations that do this work daily.</p>
   </footer>
 
@@ -546,7 +546,6 @@
     sheet.id = "print-sheet";
     for (var i = 0; i < 4; i++) { var c = card.cloneNode(true); c.removeAttribute("id"); sheet.appendChild(c); }
     document.body.appendChild(sheet);
-    document.getElementById("rc-print").addEventListener("click", function () { window.print(); });
     document.getElementById("rc-show").addEventListener("click", function () {
       var o = document.createElement("div");
       o.className = "rc-overlay"; o.setAttribute("role", "dialog"); o.setAttribute("aria-label", "Resource card");

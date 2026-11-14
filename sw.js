@@ -4,10 +4,10 @@
    serve the saved copy and refresh it in the background.
    Weather and the database are never cached here; they always go live.
    Bump VERSION when this file's own logic changes. */
-var VERSION = "dn-v4";
+var VERSION = "dn-v5";
 var CORE = [
   "./", "index.html", "playbook.html", "log.html", "help.html", "ayuda.html",
-  "site.css", "site.js", "db.js", "help.js", "ptr.js", "flyer.html", "qr-playbook.svg", "mark-on-ivory.svg", "manifest.webmanifest",
+  "site.css", "site.js", "db.js", "help.js", "ptr.js", "flyer.html", "handout.html", "car-sign.html", "qr-playbook.svg", "qr-help.svg", "qr-ayuda.svg", "qr-home.svg", "mark-on-ivory.svg", "manifest.webmanifest",
   "mark-on-navy.svg", "mark-small.svg", "favicon.svg", "dar-najat-days.ics"
 ];
 

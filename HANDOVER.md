@@ -104,3 +104,9 @@ Approved by Yassir on 14 November 2026 after a preview in chat.
 - Neither table is in the daily backup: plans expire and the tally is a rolling count.
 - `ayuda.html` is the Spanish Need a meal page. It is generated from the same text as `help.html`; when you change a phone number or hours in one, change the other. `help.js` runs both. The Spanish was written by Claude and should be read once by a fluent speaker.
 - `db.js` is the one place the database address and public key live for the new features. `index.html` and `log.html` still carry their own copy for the feedings log.
+
+### Printables
+
+- `handout.html`: pocket cards to hand to someone who needs a meal, four to a page, English on page one and Spanish on page two (print two-sided). `car-sign.html`: a landscape sign for a parked car. `flyer.html`: the flyer for community boards.
+- The codes are plain links with nothing tracked: `qr-help.svg` and `qr-ayuda.svg` open the Need a meal pages, `qr-home.svg` the home page, `qr-playbook.svg` the playbook. If the site moves to its own domain, every code and every printed card must be remade.
+- The card carries the same numbers and hours as `help.html`. Change them together.

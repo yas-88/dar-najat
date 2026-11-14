@@ -86,3 +86,13 @@ The "help most needed" flag is a rule of thumb, stated on the page: a low at or 
 - Cloudflare Turnstile on the log form, if junk entries start.
 - Other languages, when someone asks.
 - Nonprofit or fiscal sponsor, only once money is being raised.
+
+## November 2026 additions
+
+Approved by Yassir on 14 November 2026 after a preview in chat.
+
+- `help.html` is the "Need a meal?" page for people living outside. Its phone numbers and hours were checked on 14 November 2026 (211info, Oregon Health Authority, Council for the Homeless, 988 Lifeline). Recheck them once a year; the date is printed at the bottom of the page.
+- `site.js` holds shared behavior (reveal on scroll, count-up, the light and dark switch). `site.css` holds both themes: the dark values are one block near the top, under `html[data-theme="dark"]`.
+- The theme follows the visitor's phone until they tap the switch in the top bar. Their choice, the bigger-text setting, the kit planner ticks and "Your feedings" live only in that browser's storage. Nothing about a visitor is sent to the database.
+- The kit planner amounts in `playbook.html` (one item each, 10 percent spare with a minimum of 2, two waters each in heat) are starting suggestions, not a standard. Change them in the `items()` function.
+- When you add a page or a shared file, add it to the `CORE` list in `sw.js` and bump `VERSION` so it works offline.

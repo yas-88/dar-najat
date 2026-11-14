@@ -29,10 +29,49 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="site.css">
-<script>document.documentElement.classList.add("js");</script>
+<script>(function (d) { d.classList.add("js"); var t = null; try { t = localStorage.getItem("dn_theme"); if (localStorage.getItem("dn_big") === "1") d.classList.add("big"); } catch (e) {}
+  if (t !== "light" && t !== "dark") t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; d.setAttribute("data-theme", t); })(document.documentElement);</script>
 <style>
-  .hero { background: var(--navy); color: var(--ivory); padding: 40px 0 88px; text-align: center; }
-  .hero .mark { width: 128px; height: 128px; margin-bottom: 28px; }
+  .hero { background: radial-gradient(120% 90% at 50% 0%, var(--navy-soft) 0%, var(--navy) 46%, var(--navy-deep) 100%); color: var(--ivory); padding: 44px 0 72px; text-align: center; }
+  .hero .wrap { position: relative; z-index: 1; }
+  .hero .mark { width: clamp(120px, 16vw, 168px); height: auto; margin-bottom: 26px; }
+  /* The mark draws itself once, line by line */
+  .draw .s { stroke-dasharray: var(--l) var(--l); stroke-dashoffset: var(--l); animation: draw 1.5s var(--ease) forwards; animation-delay: var(--at, 0s); }
+  .draw .f { opacity: 0; animation: fade-in 0.9s ease forwards; animation-delay: var(--at, 1.5s); }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes fade-in { to { opacity: 1; } }
+  /* One small light for each person fed */
+  .lights { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .lights i {
+    position: absolute; width: var(--s); height: var(--s); background: var(--gold); border-radius: 1px;
+    transform: rotate(45deg); opacity: 0; animation: twinkle var(--dur) ease-in-out var(--t) infinite;
+  }
+  @keyframes twinkle { 0%, 100% { opacity: 0.12; transform: rotate(45deg) scale(0.7); } 50% { opacity: 0.85; transform: rotate(45deg) scale(1); } }
+  .lights-note { font-size: 13px; letter-spacing: 0.04em; color: rgba(240, 233, 220, 0.7); margin: 22px 0 0; }
+  .lights-note b { color: var(--gold); font-weight: 800; }
+
+  /* Two doors: one for people with enough to share, one for people who need a meal */
+  .doors { display: grid; gap: 12px; grid-template-columns: 1fr; max-width: 640px; margin: 36px auto 0; }
+  @media (min-width: 560px) { .doors { grid-template-columns: 1fr 1fr; } }
+  .door {
+    display: grid; gap: 4px; text-align: left; text-decoration: none; border-radius: 20px; padding: 18px 22px 20px;
+    position: relative; overflow: hidden;
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), background 0.2s ease;
+  }
+  .door-k { font-size: 12px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; }
+  .door-v { font-family: var(--display); font-weight: 700; font-size: 27px; line-height: 1.15; }
+  .door-go { position: absolute; right: 18px; top: 50%; width: 26px; height: 26px; margin-top: -13px; transition: transform 0.3s var(--ease); }
+  .door.d-give { background: var(--gold); color: var(--navy); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25); }
+  .door.d-need { background: rgba(240, 233, 220, 0.07); color: var(--ivory); box-shadow: inset 0 0 0 1.5px rgba(240, 233, 220, 0.5); }
+  .door.d-need .door-k { color: var(--gold); }
+  .door:hover { transform: translateY(-3px); }
+  .door:hover .door-go { transform: translateX(4px); }
+  .door.d-need:hover { background: rgba(240, 233, 220, 0.13); }
+  .door:focus-visible { outline: 3px solid var(--ivory); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) {
+    .draw .s { animation: none; stroke-dashoffset: 0; } .draw .f { animation: none; opacity: 1; }
+    .lights i { animation: none; opacity: 0.4; } .door, .door-go { transition: none; }
+  }
   .eyebrow { font-family: var(--display); font-size: 24px; color: var(--gold); margin: 0 0 28px; line-height: 1.2; }
   .eyebrow .latin {
     display: block; font-family: var(--body); font-size: 12px; font-weight: 700;
@@ -48,46 +87,59 @@
   .thesis b { font-style: normal; font-weight: 700; color: var(--gold); }
 
   /* Today panel */
-  .today { padding-block: 40px 8px; }
+  .today { padding-block: 44px 8px; }
+  .today-grid { display: grid; gap: 0; }
+  @media (min-width: 900px) {
+    .today-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); column-gap: 32px; align-items: end; }
+    .today-main { grid-column: 1; grid-row: 1; }
+    .today-grid .tiles2 { grid-column: 2; grid-row: 1; }
+    .today-wx { grid-column: 1 / -1; grid-row: 2; }
+    .today-grid .tiles2 { margin: 0; }
+    .d { padding: 14px 6px; }
+    .d .dn { font-size: 13px; } .d .ds { font-size: 13px; } .d .hi { font-size: 19px; } .d .lo { font-size: 15px; } .d .pp { font-size: 12px; }
+  }
   .today-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
-  .today-date { font-family: var(--display); font-weight: 700; font-size: clamp(24px, 5vw, 30px); line-height: 1.15; color: var(--navy); margin: 0; }
-  .today-time { font-family: var(--display); font-weight: 700; font-size: clamp(20px, 4vw, 24px); color: var(--terra); margin: 4px 0 0; font-variant-numeric: tabular-nums; }
+  .today-date { font-family: var(--display); font-weight: 700; font-size: clamp(24px, 5vw, 30px); line-height: 1.15; color: var(--heading); margin: 0; }
+  .today-time { font-family: var(--display); font-weight: 700; font-size: clamp(20px, 4vw, 24px); color: var(--accent); margin: 4px 0 0; font-variant-numeric: tabular-nums; }
   .today-place { font-size: 14px; color: var(--muted); margin: 6px 0 0; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; }
-  .linkish { font: inherit; font-weight: 700; color: var(--terra); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .linkish { font: inherit; font-weight: 700; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
   .refresh {
     flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px;
-    font-family: var(--body); font-size: 14px; font-weight: 700; color: var(--navy);
-    background: transparent; border: 1px solid rgba(27,42,74,0.3); border-radius: 999px; padding: 8px 14px; cursor: pointer;
+    font-family: var(--body); font-size: 14px; font-weight: 700; color: var(--heading);
+    background: transparent; border: 1px solid var(--line-strong); border-radius: 999px; padding: 8px 14px; cursor: pointer;
   }
-  .refresh:hover { border-color: var(--navy); }
-  .refresh:focus-visible, .linkish:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+  .refresh:hover { border-color: var(--heading); }
+  .refresh:focus-visible, .linkish:focus-visible { outline: 3px solid var(--heading); outline-offset: 2px; }
   .refresh svg { width: 15px; height: 15px; }
   .refresh.spin svg { animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .need { margin: 22px 0 0; border-radius: 14px; padding: 16px 18px; display: grid; gap: 4px; }
   .need.on { background: var(--terra); color: #FFFFFF; }
-  .need.off { background: var(--ivory-deep); color: var(--ink); }
+  .need.off { background: var(--card-2); color: var(--ink); }
   .need .k { font-size: 12px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.85; }
   .need .v { font-size: 17px; font-weight: 700; line-height: 1.4; }
   .need ul { margin: 6px 0 0; padding-left: 18px; font-size: 15px; font-weight: 600; }
 
   .days7 { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin: 16px 0 0; }
-  .d { border-radius: 12px; background: var(--field); border: 1px solid var(--line); padding: 10px 4px; text-align: center; display: grid; gap: 2px; font-variant-numeric: tabular-nums; }
-  .d .dn { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--navy); }
+  .d { animation: rise 0.5s var(--ease) both; animation-delay: calc(var(--i, 0) * 45ms); border-radius: 12px; background: var(--card); border: 1px solid var(--line); padding: 10px 4px; text-align: center; display: grid; gap: 2px; font-variant-numeric: tabular-nums; }
+  .d .dn { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--heading); }
   .d .ds { font-size: 11px; color: var(--muted); line-height: 1.2; min-height: 2.4em; display: grid; place-items: center; }
   .d .hi { font-size: 15px; font-weight: 800; color: var(--ink); }
   .d .lo { font-size: 13px; color: var(--muted); }
-  .d .pp { font-size: 11px; color: var(--navy); }
-  .d.flag { border-color: var(--terra); background: var(--terra-soft); }
-  .d.flag .dn, .d.flag .lo { color: var(--terra); font-weight: 800; }
+  .d .pp { font-size: 11px; color: var(--heading); }
+  .d.flag { border-color: var(--accent); background: var(--terra-soft); }
+  .d.flag .dn, .d.flag .lo { color: var(--accent); font-weight: 800; }
   .d .chip { font-size: 10px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #FFFFFF; background: var(--terra); border-radius: 999px; padding: 1px 6px; justify-self: center; }
   @media (max-width: 420px) { .days7 { gap: 4px; } .d { padding: 8px 2px; } .d .ds { font-size: 10px; } }
 
-  .tiles2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 16px 0 0; }
+  .tiles2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 18px 0 0; }
+  .today-wx { margin-top: 0; }
   .tiles2 .tile:first-child { grid-column: 1 / -1; }
-  .tile { border-radius: 14px; padding: 14px 16px; background: var(--navy); color: var(--ivory); display: grid; gap: 2px; }
-  .tile .n { font-family: var(--display); font-weight: 700; font-size: 30px; line-height: 1.1; color: var(--gold); font-variant-numeric: tabular-nums; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+  @media (prefers-reduced-motion: reduce) { .d { animation: none; } }
+  .tile { border-radius: 16px; padding: 16px 18px; background: linear-gradient(160deg, var(--navy-soft), var(--navy)); color: var(--ivory); display: grid; gap: 2px; box-shadow: var(--shadow); }
+  .tile .n { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 3.4vw, 38px); line-height: 1.1; color: var(--gold); font-variant-numeric: tabular-nums; }
   .tile .t { font-size: 13px; color: var(--on-navy); }
   .rule { font-size: 13px; color: var(--muted); margin: 14px 0 0; }
   .credit { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
@@ -95,17 +147,17 @@
 
   section { padding-block: 72px; }
   section.tight { padding-top: 0; }
-  h2 { font-family: var(--display); font-weight: 700; font-size: clamp(26px, 5vw, 34px); line-height: 1.2; margin: 0 0 18px; color: var(--navy); }
+  h2 { font-family: var(--display); font-weight: 700; font-size: clamp(26px, 5vw, 34px); line-height: 1.2; margin: 0 0 18px; color: var(--heading); }
   p { margin: 0 0 18px; }
   p:last-child { margin-bottom: 0; }
   .lede { font-size: 20px; }
 
   .days { border-top: 1px solid var(--line); margin-top: 8px; }
   .day { display: flex; gap: 24px; align-items: baseline; padding: 26px 0; border-bottom: 1px solid var(--line); }
-  .day-date { font-family: var(--display); font-size: 23px; font-weight: 700; color: var(--navy); flex: 0 0 132px; }
+  .day-date { font-family: var(--display); font-size: 23px; font-weight: 700; color: var(--heading); flex: 0 0 132px; }
   .day-date span {
     display: block; font-family: var(--body); font-size: 12px; font-weight: 700;
-    letter-spacing: 0.16em; text-transform: uppercase; color: var(--terra); margin-top: 4px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-top: 4px;
   }
   .day-note { margin: 0; }
 
@@ -113,9 +165,9 @@
   .names { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
   .names li {
     display: inline-flex; align-items: baseline; gap: 8px; padding: 10px 16px; border-radius: 999px;
-    background: var(--field); border: 1px solid var(--line); font-family: var(--display); font-size: 19px; color: var(--navy);
+    background: var(--card); border: 1px solid var(--line); font-family: var(--display); font-size: 19px; color: var(--heading);
   }
-  .names li .c { font-family: var(--body); font-size: 12px; font-weight: 800; color: var(--terra); letter-spacing: 0.04em; }
+  .names li .c { font-family: var(--body); font-size: 12px; font-weight: 800; color: var(--accent); letter-spacing: 0.04em; }
   .names li.names-empty { font-family: var(--body); font-size: 15px; color: var(--muted); background: none; border: 0; padding: 0; }
   .cal { margin-top: 26px; display: grid; gap: 8px; justify-items: start; }
   .cal-btn {
@@ -124,10 +176,86 @@
     padding: 13px 22px; border-radius: 999px;
   }
   .cal-btn:hover { background: var(--navy-soft); }
-  .cal-btn:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+  .cal-btn:focus-visible { outline: 3px solid var(--heading); outline-offset: 3px; }
   .cal-note { font-size: 14px; color: var(--muted); margin: 0; }
   .tile a { color: var(--gold); font-weight: 700; font-size: 13px; }
 
+  /* How it works */
+  .how { display: grid; gap: 14px; margin-top: 30px; counter-reset: how; }
+  @media (min-width: 760px) { .how { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; } }
+  .how a {
+    counter-increment: how; display: block; text-decoration: none; color: var(--ink);
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 22px 22px 24px; box-shadow: var(--shadow);
+  }
+  .how a::before {
+    content: counter(how); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+    background: var(--navy); color: var(--gold); font-family: var(--display); font-weight: 700; font-size: 22px; margin-bottom: 14px;
+  }
+  .how h3 { font-family: var(--display); font-weight: 700; font-size: 23px; line-height: 1.2; color: var(--heading); margin: 0 0 6px; }
+  .how p { font-size: 16px; color: var(--muted); margin: 0; }
+  .how a:focus-visible { outline: 3px solid var(--heading); outline-offset: 3px; }
+
+  /* A day for your own loved one */
+  .own { margin-top: 34px; background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 24px; box-shadow: var(--shadow); }
+  .own h3 { font-family: var(--display); font-weight: 700; font-size: 24px; line-height: 1.2; color: var(--heading); margin: 0 0 16px; }
+  .own-row { display: grid; gap: 12px; grid-template-columns: 1fr; }
+  @media (min-width: 560px) { .own-row { grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr) minmax(0, 0.8fr); } }
+  .own label { display: grid; gap: 6px; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; color: var(--heading); }
+  .own input, .own select {
+    width: 100%; height: 48px; font-family: var(--body); font-size: 16px; color: var(--ink);
+    background: var(--input); border: 1px solid var(--line-strong); border-radius: 12px; padding: 0 14px;
+  }
+  .own input:focus, .own select:focus { outline: none; border-color: var(--heading); box-shadow: 0 0 0 3px var(--focus); }
+  .own .cal-btn { margin-top: 16px; border: 0; cursor: pointer; font-family: var(--body); }
+  .own .cal-note { margin-top: 10px; }
+
+  /* A name opens its own small page */
+  .names li { padding: 0; background: none; border: 0; }
+  .names button {
+    display: inline-flex; align-items: baseline; gap: 8px; padding: 10px 16px; border-radius: 999px; cursor: pointer;
+    background: var(--card); border: 1px solid var(--line); font-family: var(--display); font-size: 19px; color: var(--heading);
+    transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), border-color 0.2s ease;
+  }
+  .names button:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--brass); }
+  .names button:focus-visible { outline: 3px solid var(--heading); outline-offset: 2px; }
+  .names button .c { font-family: var(--body); font-size: 12px; font-weight: 800; color: var(--accent); letter-spacing: 0.04em; }
+  .nd-top { background: var(--navy); color: var(--ivory); text-align: center; padding: 30px 24px 26px; position: relative; }
+  .nd-top img { width: 54px; height: 54px; display: block; margin: 0 auto 10px; }
+  .nd-k { font-family: var(--display); font-style: italic; font-size: 19px; color: var(--on-navy); margin: 0; }
+  .nd-name { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 8vw, 40px); line-height: 1.1; margin: 2px 0 10px; overflow-wrap: anywhere; color: var(--ivory); }
+  .nd-stat { font-size: 14px; font-weight: 700; letter-spacing: 0.06em; color: var(--gold); margin: 0; }
+  .nd-x { position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(240, 233, 220, 0.12); color: var(--ivory); font-size: 22px; line-height: 1; cursor: pointer; }
+  .nd-x:focus-visible { outline: 3px solid var(--gold); }
+  .nd-body { padding: 8px 24px 24px; }
+  .nd-list { list-style: none; margin: 0; padding: 0; }
+  .nd-list li { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 16px; }
+  .nd-list .w { font-weight: 700; color: var(--heading); }
+  .nd-list .dt { color: var(--accent); font-size: 14px; font-weight: 600; white-space: nowrap; }
+  .nd-actions { display: grid; gap: 10px; margin-top: 20px; }
+  .nd-actions .btn { background: var(--navy); color: var(--ivory); box-shadow: none; width: 100%; }
+  .nd-actions .btn:hover { background: var(--navy-soft); }
+  .nd-actions .btn.ghost { background: transparent; color: var(--heading); box-shadow: inset 0 0 0 2px var(--heading); }
+  .nd-actions .btn:focus-visible { outline-color: var(--heading); }
+  .nd-status { font-size: 14px; color: var(--muted); margin: 10px 0 0; text-align: center; min-height: 1.4em; }
+
+  @media (min-width: 900px) {
+    .hero { padding: 64px 0 96px; }
+    section { padding-block: 88px; }
+    .lede { font-size: 22px; }
+  }
+  /* Phones: keep both doors on the first screen */
+  @media (max-width: 559px) {
+    .hero { padding: 26px 0 40px; }
+    .hero .mark { width: 96px; margin-bottom: 16px; }
+    .eyebrow { font-size: 22px; margin-bottom: 16px; }
+    .name-ar { font-size: 34px; }
+    .dates { margin-top: 14px; font-size: 13px; }
+    .thesis { margin-top: 20px; }
+    .doors { margin-top: 22px; gap: 10px; }
+    .door { padding: 13px 20px 15px; border-radius: 18px; }
+    .door-v { font-size: 24px; }
+    .lights-note { margin-top: 16px; }
+  }
   @media (max-width: 540px) {
     .day { flex-direction: column; gap: 6px; }
     .day-date { flex-basis: auto; }
@@ -139,57 +267,95 @@
 
   <div class="topbar">
     <div class="wrap">
-      <a class="brand" href="./" aria-current="page"><img src="mark-small.svg" alt=""><span>DAR NAJAT</span></a>
+      <a class="brand" href="./"><img src="mark-small.svg" alt=""><span>DAR NAJAT</span></a>
       <nav class="nav" aria-label="Main">
-        <a href="playbook.html">Playbook</a>
-        <a href="log.html">Log</a>
+        <a href="./" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg><span>Home</span></a>
+        <a href="playbook.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h10"/></svg><span>Playbook</span></a>
+        <a href="log.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20h14"/><path d="M7 16l9.5-9.5 3 3L10 19H7z"/></svg><span>Log</span></a>
+        <a class="nav-help" href="help.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11h18a9 9 0 0 1-18 0z"/><path d="M9 20.5h6"/><path d="M9.5 3.5c0 1.6 1.2 1.6 1.2 3.2M13.5 3.5c0 1.6 1.2 1.6 1.2 3.2"/></svg><span>Need a meal?</span></a>
       </nav>
+      <button type="button" class="theme-btn" id="theme-btn" aria-label="Switch to dark mode">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.500A8 8 0 0 1 9.500 4a7 7 0 1 0 10.500 10.500z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.500v2M12 19.500v2M2.500 12h2M19.500 12h2M5.300 5.300l1.400 1.400M17.300 17.300l1.400 1.400M5.300 18.700l1.400-1.400M17.300 6.700l1.400-1.400"/></svg>
+      </button>
     </div>
   </div>
 
   <header class="hero">
+    <div class="lights" id="lights" aria-hidden="true"></div>
     <div class="wrap">
-      <img class="mark reveal" src="mark-on-navy.svg" alt="Dar Najat mark: a Moroccan zellige star around a house, with an open hand offering bread">
+      <svg class="mark draw" viewBox="0 0 240 240" role="img" aria-label="Dar Najat mark: a Moroccan zellige star around a house, with an open hand offering bread">
+        <g fill="none" stroke="#E2C488" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+          <rect class="s" style="--l:560" x="52" y="52" width="136" height="136" rx="8"/>
+          <rect class="s" style="--l:560;--at:.25s" x="52" y="52" width="136" height="136" rx="8" transform="rotate(45 120 120)"/>
+          <path class="s" style="--l:230;--at:.7s" d="M86 168 V110 L120 80 L154 110 V168" stroke-width="5.5"/>
+          <path class="s" style="--l:90;--at:1.1s" d="M80 168 H160" stroke-width="5.5"/>
+          <path class="s" style="--l:170;--at:1.25s" d="M90 166 L104 151 Q108 147 113 147 H137 Q144 147 144 153 Q144 159 137 159 H125 L116 168" stroke-width="5.5"/>
+        </g>
+        <g class="f" style="--at:1.5s" fill="#F0E9DC">
+          <rect x="115" y="94" width="4.5" height="4.5" rx="1"/><rect x="120.5" y="94" width="4.5" height="4.5" rx="1"/>
+          <rect x="115" y="99.5" width="4.5" height="4.5" rx="1"/><rect x="120.5" y="99.5" width="4.5" height="4.5" rx="1"/>
+        </g>
+        <g class="f" style="--at:1.9s" fill="none" stroke="#F0E9DC" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M108 139 Q108 122 125 122 Q142 122 142 139 Z"/>
+          <path d="M117 133 L120 128 M124.5 134 L127.5 127.5 M132 133 L135 128"/>
+        </g>
+      </svg>
       <p class="eyebrow reveal" lang="ar" dir="rtl">دار نجاة<span class="latin" lang="en" dir="ltr">Dar Najat</span></p>
       <p class="name-ar reveal" lang="ar" dir="rtl">نجاة إحسان</p>
       <h1 class="name reveal">Najat Ihsane</h1>
       <p class="dates reveal">14 October 1958 &ndash; 28 June 2024</p>
       <p class="thesis reveal">Dar Najat is a house built in her name, a place to feed someone who has none.</p>
+      <div class="doors reveal">
+        <a class="door d-give" href="playbook.html">
+          <span class="door-k">I have enough to share</span><span class="door-v">Run a feeding</span>
+          <svg class="door-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="door d-need" href="help.html">
+          <span class="door-k">I need a meal</span><span class="door-v">Find food today</span>
+          <svg class="door-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      <p class="lights-note" id="lights-note" hidden></p>
     </div>
   </header>
 
   <main>
 
   <section class="today" aria-labelledby="today-date">
-    <div class="wrap">
-      <p class="label">Today</p>
-      <div class="today-head">
-        <div>
-          <h2 class="today-date" id="today-date">&nbsp;</h2>
-          <p class="today-time" id="today-time" aria-live="off"></p>
-          <p class="today-place"><span id="place">Vancouver, WA</span><button type="button" class="linkish" id="use-loc">Use my location</button></p>
+    <div class="wrap wide">
+      <div class="today-grid">
+        <div class="today-main">
+          <p class="label">Today</p>
+          <div class="today-head">
+            <div>
+              <h2 class="today-date" id="today-date">&nbsp;</h2>
+              <p class="today-time" id="today-time" aria-live="off"></p>
+              <p class="today-place"><span id="place">Vancouver, WA</span><button type="button" class="linkish" id="use-loc">Use my location</button></p>
+            </div>
+            <button type="button" class="refresh" id="t-refresh" aria-label="Refresh today's weather and counts">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+              Refresh
+            </button>
+          </div>
+          <div class="need off" id="need" aria-live="polite">
+            <span class="k">This week</span>
+            <span class="v">Loading the forecast…</span>
+          </div>
         </div>
-        <button type="button" class="refresh" id="t-refresh" aria-label="Refresh today's weather and counts">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
-          Refresh
-        </button>
+
+        <div class="today-wx">
+          <div class="days7" id="days7" aria-label="Seven-day forecast"></div>
+          <p class="rule">A day is flagged when the low is at or below freezing, the high reaches 90°F (32°C), or the weather service has a cold or heat alert out.</p>
+          <p class="credit" id="credit"><a href="https://open-meteo.com/" rel="noopener">Weather data by Open-Meteo.com</a></p>
+        </div>
+
+        <div class="tiles2">
+          <div class="tile"><span class="n" id="anchor-n">&nbsp;</span><span class="t" id="anchor-t">&nbsp;</span><a href="dar-najat-days.ics">Remind me every year</a></div>
+          <div class="tile"><span class="n" id="count-f">&ndash;</span><span class="t" id="count-f-t">feedings logged</span></div>
+          <div class="tile"><span class="n" id="count-p">&ndash;</span><span class="t">people fed, about</span></div>
+        </div>
       </div>
-
-      <div class="need off" id="need" aria-live="polite">
-        <span class="k">This week</span>
-        <span class="v">Loading the forecast…</span>
-      </div>
-
-      <div class="days7" id="days7" aria-label="Seven-day forecast"></div>
-
-      <div class="tiles2">
-        <div class="tile"><span class="n" id="anchor-n">&nbsp;</span><span class="t" id="anchor-t">&nbsp;</span><a href="dar-najat-days.ics">Remind me every year</a></div>
-        <div class="tile"><span class="n" id="count-f">&ndash;</span><span class="t" id="count-f-t">feedings logged</span></div>
-        <div class="tile"><span class="n" id="count-p">&ndash;</span><span class="t">people fed, about</span></div>
-      </div>
-
-      <p class="rule">A day is flagged when the low is at or below freezing, the high reaches 90°F (32°C), or the weather service has a cold or heat alert out.</p>
-      <p class="credit" id="credit"><a href="https://open-meteo.com/" rel="noopener">Weather data by Open-Meteo.com</a></p>
     </div>
   </section>
     <section>
@@ -198,6 +364,13 @@
         <h2 class="reveal">A meal given in their memory.</h2>
         <p class="lede reveal">Dar Najat began with one mother, Najat, and is built for anyone. You run a feeding for people without a home, you do it in a loved one’s name, and you log it so the next person knows that corner was cared for.</p>
         <p class="reveal">It is built to be carried by many hands, not one. The records belong to everyone who shows up, so the work lives on long after any single person steps back.</p>
+      </div>
+      <div class="wrap wide">
+        <div class="how">
+          <a class="lift reveal" href="playbook.html"><h3>Read the playbook</h3><p>Five steps: what to bring, how to keep food safe, how to serve with dignity. A planner sizes your kit.</p></a>
+          <a class="lift reveal" href="playbook.html#step-4"><h3>Feed someone</h3><p>In a loved one’s name. Alone or with a few people, in one afternoon.</p></a>
+          <a class="lift reveal" href="log.html"><h3>Log it</h3><p>A date and a rough place, so the next person knows that corner was cared for.</p></a>
+        </div>
       </div>
     </section>
 
@@ -218,6 +391,17 @@
           <a class="cal-btn" href="dar-najat-days.ics">Add both days to my calendar</a>
           <p class="cal-note">Adds 14 October and 28 June as yearly reminders, with a nudge the day before.</p>
         </div>
+        <form class="own reveal" id="own-form">
+          <p class="label">A day for someone you love</p>
+          <h3>Pick their day. Your calendar will remind you every year.</h3>
+          <div class="own-row">
+            <label>Their name<input type="text" id="own-name" maxlength="80" placeholder="A loved one" autocomplete="off"></label>
+            <label>Month<select id="own-m"></select></label>
+            <label>Day<select id="own-d"></select></label>
+          </div>
+          <button type="submit" class="cal-btn">Add their day to my calendar</button>
+          <p class="cal-note" id="own-note">Makes a yearly reminder on this device, with a nudge the day before. Nothing is sent anywhere.</p>
+        </form>
       </div>
     </section>
 
@@ -235,8 +419,8 @@
       <div class="wrap">
         <p class="label">Remembered here</p>
         <h2>Names fed in memory of</h2>
-        <p class="rem-sub">Every name below came from someone who ran a feeding and logged it.</p>
-        <ul class="names" id="names"><li class="names-empty">Loading names…</li></ul>
+        <p class="rem-sub">Every name below came from someone who ran a feeding and logged it. Tap a name to see what was given in it.</p>
+        <ul class="names" id="names"><li class="names-empty skeleton">Loading names…</li></ul>
       </div>
     </section>
 
@@ -245,9 +429,28 @@
         <h2 class="reveal">Feed someone in their name.</h2>
         <p class="reveal">A short playbook walks you through it: where to go, what to bring, how to serve with dignity. Then you log the feeding so others know the spot is covered.</p>
         <a class="btn reveal" href="playbook.html">Run a feeding</a>
+        <p class="reveal" style="font-size:15px;margin-top:22px">Need a meal yourself? <a href="help.html" style="color:var(--gold);font-weight:700">Find food today</a>.</p>
       </div>
     </section>
   </main>
+
+  <dialog class="sheet" id="name-dlg" aria-labelledby="nd-name">
+    <div class="nd-top">
+      <button type="button" class="nd-x" id="nd-x" aria-label="Close">&times;</button>
+      <img src="mark-on-navy.svg" alt="">
+      <p class="nd-k">in memory of</p>
+      <h2 class="nd-name" id="nd-name"></h2>
+      <p class="nd-stat" id="nd-stat"></p>
+    </div>
+    <div class="nd-body">
+      <ul class="nd-list" id="nd-list"></ul>
+      <div class="nd-actions">
+        <a class="btn" id="nd-feed" href="log.html">Log a feeding in this name</a>
+        <button type="button" class="btn ghost" id="nd-share">Share this page</button>
+      </div>
+      <p class="nd-status" id="nd-status" aria-live="polite"></p>
+    </div>
+  </dialog>
 
   <footer>
     <a class="home-link" href="#top" aria-label="Back to top"><img src="mark-small.svg" alt=""><span>Back to top</span></a>
@@ -256,22 +459,7 @@
     <p>Meant to be carried by many hands.</p>
   </footer>
 
-  <script>
-    (function () {
-      var items = document.querySelectorAll(".reveal");
-      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduce || !("IntersectionObserver" in window)) {
-        items.forEach(function (el) { el.classList.add("in"); });
-        return;
-      }
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
-        });
-      }, { threshold: 0.12 });
-      items.forEach(function (el) { io.observe(el); });
-    })();
-  </script>
+  <script src="site.js"></script>
 
 
   <script>
@@ -378,6 +566,7 @@
         if (hot) flagged.push({ name: i === 0 ? "today" : date.toLocaleDateString("en-US", { weekday: "long" }), why: "high " + hi + U });
         var cell = document.createElement("div");
         cell.className = "d" + (cold || hot ? " flag" : "");
+        cell.style.setProperty("--i", i);
         var pp = d.precipitation_probability_max ? d.precipitation_probability_max[i] : null;
         cell.innerHTML = '<span class="dn"></span><span class="ds"></span><span class="hi"></span><span class="lo"></span>' +
           (pp != null ? '<span class="pp"></span>' : "") + (cold || hot ? '<span class="chip"></span>' : "");
@@ -427,18 +616,126 @@
     // ---- Live counts, straight from the community log
     async function refreshCounts() {
       try {
-        var r = await fetch(SUPABASE_URL + "/rest/v1/feedings?select=people_count,in_memory_of", {
+        var r = await fetch(SUPABASE_URL + "/rest/v1/feedings?select=people_count,in_memory_of,feeding_date,city,state&order=feeding_date.desc", {
           headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + SUPABASE_ANON_KEY }
         });
         if (!r.ok) throw new Error(r.status);
         var rows = await r.json();
         var people = rows.reduce(function (s, x) { return s + (x.people_count || 0); }, 0);
-        $("count-f").textContent = rows.length.toLocaleString("en-US");
+        ROWS = rows;
+        window.darCount($("count-f"), rows.length);
         $("count-f-t").textContent = rows.length === 1 ? "feeding logged" : "feedings logged";
         paintNames(rows);
-        $("count-p").textContent = people.toLocaleString("en-US");
+        window.darCount($("count-p"), people);
+        paintLights(people);
+        if (pendingName) { var pn = pendingName; pendingName = null; openName(pn); }
       } catch (e) {}
     }
+
+    var ROWS = [];
+    var pendingName = null;
+    try { pendingName = new URLSearchParams(location.search).get("name"); } catch (e) {}
+    function norm(n) { return (n || "").replace(/\s+/g, " ").trim(); }
+
+    // One small light in the hero for each person fed. Positions are fixed per
+    // light so the sky doesn't reshuffle on refresh.
+    var lit = 0;
+    function paintLights(people) {
+      var box = $("lights"), want = Math.min(people, 400);
+      function rnd(i, salt) { var x = Math.sin(i * 127.1 + salt * 311.7) * 43758.5453; return x - Math.floor(x); }
+      for (var i = lit; i < want; i++) {
+        var x = rnd(i, 1) * 100, y = rnd(i, 2) * 100;
+        if (Math.abs(x - 50) < 26 && rnd(i, 3) > 0.22) x = x < 50 ? x * 0.42 : 100 - (100 - x) * 0.42;
+        var el = document.createElement("i");
+        el.style.cssText = "left:" + x.toFixed(2) + "%;top:" + y.toFixed(2) + "%;--s:" + (3 + Math.round(rnd(i, 4) * 4)) +
+          "px;--t:" + (rnd(i, 5) * 6).toFixed(2) + "s;--dur:" + (3.5 + rnd(i, 6) * 4).toFixed(2) + "s";
+        box.appendChild(el);
+      }
+      lit = Math.max(lit, want);
+      var note = $("lights-note");
+      if (people > 0) {
+        note.hidden = false;
+        note.innerHTML = "About <b></b> fed so far. One light for each.";
+        note.querySelector("b").textContent = people.toLocaleString("en-US") + (people === 1 ? " person" : " people");
+      }
+    }
+
+    // A name's own small page: what was given in it, and a way to add to it.
+    function openName(name) {
+      var key = norm(name).toLowerCase(), dlg = $("name-dlg");
+      var mine = ROWS.filter(function (x) { return norm(x.in_memory_of).toLowerCase() === key; });
+      if (!mine.length || !dlg.showModal) return;
+      var shown = norm(mine[0].in_memory_of);
+      var people = mine.reduce(function (s, x) { return s + (x.people_count || 0); }, 0);
+      $("nd-name").textContent = shown;
+      $("nd-stat").textContent = mine.length + (mine.length === 1 ? " feeding" : " feedings") + (people ? "  ·  about " + people.toLocaleString("en-US") + " people fed" : "");
+      var ul = $("nd-list"); ul.innerHTML = "";
+      mine.slice(0, 30).forEach(function (x) {
+        var li = document.createElement("li");
+        var w = document.createElement("span"); w.className = "w";
+        w.textContent = [x.city, x.state].filter(Boolean).join(", ") || "A corner cared for";
+        var dt = document.createElement("span"); dt.className = "dt";
+        var p = String(x.feeding_date || "").split("-");
+        dt.textContent = p.length === 3 ? new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "";
+        li.appendChild(w); li.appendChild(dt); ul.appendChild(li);
+      });
+      $("nd-feed").href = "log.html?name=" + encodeURIComponent(shown);
+      $("nd-status").textContent = "";
+      dlg.dataset.name = shown;
+      dlg.showModal();
+    }
+    $("nd-x").addEventListener("click", function () { $("name-dlg").close(); });
+    $("name-dlg").addEventListener("click", function (e) { if (e.target === this) this.close(); });
+    $("nd-share").addEventListener("click", async function () {
+      var name = $("name-dlg").dataset.name || "";
+      var url = location.origin + location.pathname + "?name=" + encodeURIComponent(name);
+      var data = { title: "In memory of " + name, text: "People have been fed in memory of " + name + ". See it, or feed someone in a name you love.", url: url };
+      if (navigator.share) { try { await navigator.share(data); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+      try { await navigator.clipboard.writeText(url); $("nd-status").textContent = "Link copied."; }
+      catch (e) { $("nd-status").textContent = url; }
+    });
+
+    // A yearly reminder for any loved one, made on this device as a calendar file.
+    (function () {
+      var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+      var LEN = [31,29,31,30,31,30,31,31,30,31,30,31];
+      var selM = $("own-m"), selD = $("own-d"), now = new Date();
+      MONTHS.forEach(function (m, i) { var o = document.createElement("option"); o.value = i; o.textContent = m; selM.appendChild(o); });
+      function fillDays() {
+        var keep = +selD.value || now.getDate(), max = LEN[+selM.value];
+        selD.innerHTML = "";
+        for (var d = 1; d <= max; d++) { var o = document.createElement("option"); o.value = d; o.textContent = d; selD.appendChild(o); }
+        selD.value = Math.min(keep, max);
+      }
+      selM.value = now.getMonth(); fillDays();
+      selM.addEventListener("change", fillDays);
+      function pad(n) { return String(n).padStart(2, "0"); }
+      function ymd(d) { return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()); }
+      function esc(t) { return t.replace(/\\/g, "\\\\").replace(/([,;])/g, "\\$1").replace(/\r?\n/g, " "); }
+      $("own-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var name = norm($("own-name").value) || "a loved one", m = +selM.value, d = +selD.value;
+        var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        var y = today.getFullYear(), start = new Date(y, m, d);
+        while (start < today || start.getMonth() !== m) { y++; start = new Date(y, m, d); }   // next real occurrence (29 February waits for a leap year)
+        var end = new Date(start.getFullYear(), m, d + 1);
+        var stamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+        var ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Dar Najat//A day in their name//EN", "CALSCALE:GREGORIAN", "BEGIN:VEVENT",
+          "UID:dn-" + Date.now() + "-" + m + "-" + d + "@charity.safjob.com", "DTSTAMP:" + stamp,
+          "DTSTART;VALUE=DATE:" + ymd(start), "DTEND;VALUE=DATE:" + ymd(end), "RRULE:FREQ=YEARLY",
+          "SUMMARY:" + esc("Feed someone in memory of " + name),
+          "DESCRIPTION:" + esc("A day in their name. The playbook: https://charity.safjob.com/playbook.html"),
+          "URL:https://charity.safjob.com/playbook.html", "TRANSP:TRANSPARENT",
+          "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + esc("Tomorrow: feed someone in memory of " + name), "TRIGGER:-P1D", "END:VALARM",
+          "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar;charset=utf-8" }));
+        a.download = "a-day-in-their-name.ics";
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+        $("own-note").textContent = "Made a reminder for " + MONTHS[m] + " " + d + ", every year. Open the file to add it to your calendar.";
+      });
+    })();
 
     // Names remembered: grouped ignoring case and extra spaces, most-fed first.
     function paintNames(rows) {
@@ -460,11 +757,14 @@
         ul.appendChild(e); return;
       }
       list.forEach(function (g) {
-        var li = document.createElement("li");
-        li.appendChild(document.createTextNode(g.name));
+        var li = document.createElement("li"), b = document.createElement("button");
+        b.type = "button";
+        b.appendChild(document.createTextNode(g.name));
         var c = document.createElement("span"); c.className = "c";
         c.textContent = g.count + (g.count === 1 ? " feeding" : " feedings");
-        li.appendChild(c); ul.appendChild(li);
+        b.appendChild(c);
+        b.addEventListener("click", function () { openName(g.name); });
+        li.appendChild(b); ul.appendChild(li);
       });
     }
 

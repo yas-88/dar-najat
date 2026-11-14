@@ -29,16 +29,76 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="site.css">
+<script>(function (d) { d.classList.add("js"); var t = null; try { t = localStorage.getItem("dn_theme"); if (localStorage.getItem("dn_big") === "1") d.classList.add("big"); } catch (e) {}
+  if (t !== "light" && t !== "dark") t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; d.setAttribute("data-theme", t); })(document.documentElement);</script>
 <style>
 
   /* Hero */
   .hero .mark { width: 72px; height: 72px; margin-bottom: 20px; }
   .hero {
-    background: var(--navy);
+    background: radial-gradient(120% 90% at 50% 0%, var(--navy-soft) 0%, var(--navy) 50%, var(--navy-deep) 100%);
     color: var(--ivory);
-    padding: 32px 0 64px;
+    padding: 36px 0 64px;
     text-align: center;
   }
+  /* Reading progress, tucked under the top bar */
+  .progress { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--gold); transform-origin: 0 50%; transform: scaleX(0); }
+
+  /* Laptop: a rail of the five steps stays beside the page */
+  .rail { display: none; }
+  @media (min-width: 1040px) {
+    .pb { display: grid; grid-template-columns: 230px minmax(0, 720px); gap: 48px; justify-content: center; align-items: start; padding-inline: 36px; }
+    .pb .step > .wrap { padding-inline: 0; max-width: none; }
+    .rail { display: block; position: sticky; top: 96px; padding-top: 52px; }
+    .rail p { font-size: 12px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+    .rail ol { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--line); }
+    .rail a {
+      display: flex; gap: 12px; align-items: baseline; text-decoration: none; color: var(--muted); font-size: 15px; font-weight: 600; line-height: 1.3;
+      padding: 10px 0 10px 16px; margin-left: -2px; border-left: 2px solid transparent; transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .rail a b { font-family: var(--display); font-size: 20px; color: var(--brass); }
+    .rail a:hover { color: var(--heading); }
+    .rail a.on { color: var(--heading); font-weight: 800; border-left-color: var(--accent); }
+    .rail a.on b { color: var(--accent); }
+    .rail .rail-cta { display: inline-block; margin-top: 22px; background: var(--navy); color: var(--ivory); font-weight: 800; font-size: 14px; border-radius: 999px; padding: 11px 20px; border: 0; }
+    .rail .rail-cta:hover { color: var(--ivory); background: var(--navy-soft); }
+  }
+  .step { scroll-margin-top: 70px; }
+
+  /* Kit planner */
+  .planner { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 22px; box-shadow: var(--shadow); margin: 6px 0 26px; }
+  .planner .label { margin-bottom: 8px; }
+  .planner h3 { font-family: var(--display); font-weight: 700; font-size: 24px; line-height: 1.2; color: var(--heading); margin: 0 0 16px; }
+  .pl-top { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; }
+  .stepper { display: inline-grid; grid-template-columns: 52px 84px 52px; border-radius: 16px; overflow: hidden; border: 1px solid var(--line-strong); background: var(--input); }
+  .stepper button { height: 52px; border: 0; background: var(--navy); color: var(--gold); font-size: 26px; font-weight: 700; cursor: pointer; font-family: var(--body); line-height: 1; }
+  .stepper button:active { background: var(--navy-soft); }
+  .stepper input { width: 100%; height: 52px; border: 0; text-align: center; font-family: var(--display); font-weight: 700; font-size: 28px; color: var(--heading); background: transparent; -moz-appearance: textfield; appearance: textfield; padding: 0; }
+  .stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .seg { display: inline-flex; background: var(--card-2); border-radius: 999px; padding: 4px; }
+  .seg button { border: 0; background: transparent; font-family: var(--body); font-weight: 800; font-size: 14px; color: var(--heading); padding: 10px 16px; border-radius: 999px; cursor: pointer; min-height: 44px; transition: background 0.2s ease, color 0.2s ease; }
+  .seg button[aria-pressed="true"] { background: var(--navy); color: var(--gold); }
+  .stepper button:focus-visible, .stepper input:focus-visible, .seg button:focus-visible, .pl-list label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .pl-bar { height: 8px; border-radius: 999px; background: var(--card-2); margin: 20px 0 8px; overflow: hidden; }
+  .pl-bar span { display: block; height: 100%; width: 0; border-radius: 999px; background: var(--terra); transition: width 0.5s var(--ease), background 0.3s ease; }
+  .pl-bar.done span { background: var(--brass); }
+  .pl-count { font-size: 14px; font-weight: 700; color: var(--accent); margin: 0 0 6px; }
+  .pl-list { list-style: none; margin: 0; padding: 0; }
+  .pl-list label { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--line); cursor: pointer; border-radius: 6px; }
+  .pl-list li:last-child label { border-bottom: 0; }
+  .pl-list input { position: absolute; opacity: 0; pointer-events: none; }
+  .pl-box { width: 28px; height: 28px; border-radius: 9px; border: 2px solid var(--line-strong); display: grid; place-items: center; background: var(--input); transition: background 0.2s ease, border-color 0.2s ease, transform 0.25s var(--ease); }
+  .pl-box svg { width: 16px; height: 16px; stroke: #fff; stroke-dasharray: 24; stroke-dashoffset: 24; transition: stroke-dashoffset 0.3s ease 0.05s; }
+  .pl-list input:checked + .pl-box { background: var(--navy); border-color: var(--heading); transform: scale(1.06); }
+  .pl-list input:checked + .pl-box svg { stroke-dashoffset: 0; }
+  .pl-t { font-weight: 700; color: var(--heading); line-height: 1.3; }
+  .pl-t small { display: block; font-weight: 400; font-size: 13px; color: var(--muted); }
+  .pl-list input:checked ~ .pl-t { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line-strong); }
+  .pl-q { font-family: var(--display); font-weight: 700; font-size: 22px; color: var(--accent); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .pl-q small { font-family: var(--body); font-size: 12px; font-weight: 700; color: var(--muted); margin-left: 4px; }
+  .pl-foot { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin-top: 14px; font-size: 13px; color: var(--muted); }
+  .pl-foot button { font: inherit; font-weight: 700; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  @media print { .planner, .rail, .progress { display: none !important; } }
   .eyebrow {
     font-family: var(--body);
     font-size: 12px;
@@ -68,7 +128,7 @@
     font-weight: 700;
     font-size: 34px;
     line-height: 1;
-    color: var(--terra);
+    color: var(--accent);
     flex: 0 0 auto;
   }
   h2 {
@@ -77,7 +137,7 @@
     font-size: clamp(24px, 5vw, 30px);
     line-height: 1.15;
     margin: 0;
-    color: var(--navy);
+    color: var(--heading);
   }
   .step > .wrap > p { margin: 0 0 16px; }
   .step .body { padding-left: 52px; }
@@ -95,7 +155,7 @@
     background: var(--brass);
     transform: rotate(45deg);
   }
-  ul.kit li b { color: var(--navy); }
+  ul.kit li b { color: var(--heading); }
 
   .group-label {
     font-family: var(--body);
@@ -103,22 +163,22 @@
     font-weight: 700;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--terra);
+    color: var(--accent);
     margin: 26px 0 8px;
   }
 
   .note {
-    background: var(--ivory-deep);
+    background: var(--card-2);
     border-left: 3px solid var(--brass);
     padding: 18px 20px;
-    border-radius: 2px;
+    border-radius: 4px 14px 14px 4px;
     font-size: 16px;
     margin: 22px 0 0;
   }
-  .note b { color: var(--navy); }
+  .note b { color: var(--heading); }
 
   .danger {
-    border-left-color: var(--terra);
+    border-left-color: var(--accent);
   }
 
 
@@ -134,9 +194,9 @@
   .rc-line { font-size: 16px; margin: 0 0 6px; color: var(--on-navy); }
   .rc-line b { color: var(--ivory); }
   .rc-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
-  .rc-btn { font-family: var(--body); font-weight: 800; font-size: 15px; border-radius: 999px; padding: 12px 20px; cursor: pointer; background: var(--navy); color: var(--ivory); border: 2px solid var(--navy); }
-  .rc-btn.rc-ghost { background: transparent; color: var(--navy); }
-  .rc-btn:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+  .rc-btn { font-family: var(--body); font-weight: 800; font-size: 15px; border-radius: 999px; padding: 12px 20px; cursor: pointer; background: var(--navy); color: var(--ivory); border: 2px solid var(--heading); }
+  .rc-btn.rc-ghost { background: transparent; color: var(--heading); }
+  .rc-btn:focus-visible { outline: 3px solid var(--heading); outline-offset: 3px; }
   .rc-src { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
   /* Full-screen card to hold up for someone */
   body.showing-card { overflow: hidden; }
@@ -162,10 +222,17 @@
     <div class="wrap">
       <a class="brand" href="./"><img src="mark-small.svg" alt=""><span>DAR NAJAT</span></a>
       <nav class="nav" aria-label="Main">
-        <a href="playbook.html" aria-current="page">Playbook</a>
-        <a href="log.html">Log</a>
+        <a href="./"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg><span>Home</span></a>
+        <a href="playbook.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h10"/></svg><span>Playbook</span></a>
+        <a href="log.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20h14"/><path d="M7 16l9.5-9.5 3 3L10 19H7z"/></svg><span>Log</span></a>
+        <a class="nav-help" href="help.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11h18a9 9 0 0 1-18 0z"/><path d="M9 20.5h6"/><path d="M9.5 3.5c0 1.6 1.2 1.6 1.2 3.2M13.5 3.5c0 1.6 1.2 1.6 1.2 3.2"/></svg><span>Need a meal?</span></a>
       </nav>
+      <button type="button" class="theme-btn" id="theme-btn" aria-label="Switch to dark mode">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.500A8 8 0 0 1 9.500 4a7 7 0 1 0 10.500 10.500z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.500v2M12 19.500v2M2.500 12h2M19.500 12h2M5.300 5.300l1.400 1.400M17.300 17.300l1.400 1.400M5.300 18.700l1.400-1.400M17.300 6.700l1.400-1.400"/></svg>
+      </button>
     </div>
+    <div class="progress" id="progress" aria-hidden="true"></div>
   </div>
 
   <header class="hero">
@@ -180,9 +247,23 @@
 
   <main>
 
-    <section class="step">
+    <div class="pb">
+    <nav class="rail" aria-label="Steps">
+      <p>Five steps</p>
+      <ol>
+        <li><a href="#step-1"><b>1</b>Decide before you go</a></li>
+        <li><a href="#step-2"><b>2</b>What to bring</a></li>
+        <li><a href="#step-3"><b>3</b>Keep the food safe</a></li>
+        <li><a href="#step-4"><b>4</b>Serve with dignity</a></li>
+        <li><a href="#step-5"><b>5</b>Log it before you forget</a></li>
+      </ol>
+      <a class="rail-cta" href="log.html">Log a feeding</a>
+    </nav>
+    <div class="steps">
+
+    <section class="step" id="step-1">
       <div class="wrap">
-        <div class="step-head"><span class="num">1</span><h2>Decide before you go</h2></div>
+        <div class="step-head reveal"><span class="num">1</span><h2>Decide before you go</h2></div>
         <div class="body">
           <p>Pick a day. Her birthday (14 October), the day she passed (28 June), or any day that's yours to give.</p>
           <p>Choose what you're giving. Two good options, and you can do both:</p>
@@ -195,11 +276,32 @@
       </div>
     </section>
 
-    <section class="step">
+    <section class="step" id="step-2">
       <div class="wrap">
-        <div class="step-head"><span class="num">2</span><h2>What to bring</h2></div>
+        <div class="step-head reveal"><span class="num">2</span><h2>What to bring</h2></div>
         <div class="body">
           <p>The needs on the street are consistent: food, water, hygiene, and dry socks. Build around those.</p>
+
+          <div class="planner" id="planner">
+            <p class="label">Kit planner</p>
+            <h3>How many people are you feeding?</h3>
+            <div class="pl-top">
+              <div class="stepper">
+                <button type="button" id="pl-minus" aria-label="Fewer people">&minus;</button>
+                <input type="number" id="pl-n" inputmode="numeric" min="1" max="500" value="10" aria-label="Number of people">
+                <button type="button" id="pl-plus" aria-label="More people">+</button>
+              </div>
+              <div class="seg" role="group" aria-label="Weather on the day">
+                <button type="button" data-w="cold" aria-pressed="false">Cold</button>
+                <button type="button" data-w="mild" aria-pressed="false">Mild</button>
+                <button type="button" data-w="hot" aria-pressed="false">Hot</button>
+              </div>
+            </div>
+            <div class="pl-bar" id="pl-bar"><span id="pl-fill"></span></div>
+            <p class="pl-count" id="pl-count" aria-live="polite"></p>
+            <ul class="pl-list" id="pl-list"></ul>
+            <div class="pl-foot"><button type="button" id="pl-send">Send this list to someone</button><button type="button" id="pl-reset">Clear the ticks</button><span>Saved on this phone. These are starting amounts; give what you can.</span></div>
+          </div>
 
           <p class="group-label">Food &amp; water</p>
           <ul class="kit">
@@ -252,9 +354,9 @@
       </div>
     </section>
 
-    <section class="step">
+    <section class="step" id="step-3">
       <div class="wrap">
-        <div class="step-head"><span class="num">3</span><h2>Keep the food safe</h2></div>
+        <div class="step-head reveal"><span class="num">3</span><h2>Keep the food safe</h2></div>
         <div class="body">
           <p>If you're handing out food you prepared, a few rules keep people from getting sick.</p>
           <ul class="kit">
@@ -271,9 +373,9 @@
       </div>
     </section>
 
-    <section class="step">
+    <section class="step" id="step-4">
       <div class="wrap">
-        <div class="step-head"><span class="num">4</span><h2>Serve with dignity</h2></div>
+        <div class="step-head reveal"><span class="num">4</span><h2>Serve with dignity</h2></div>
         <div class="body">
           <p>How you give matters as much as what you give. The point is one person treating another as an equal.</p>
           <ul class="kit">
@@ -287,9 +389,9 @@
       </div>
     </section>
 
-    <section class="step">
+    <section class="step" id="step-5">
       <div class="wrap">
-        <div class="step-head"><span class="num">5</span><h2>Log it before you forget</h2></div>
+        <div class="step-head reveal"><span class="num">5</span><h2>Log it before you forget</h2></div>
         <div class="body">
           <p>This is the part that outlives any one of us. When you log a feeding, the next person knows that corner was cared for, and Najat's name is on the record.</p>
           <p>You'll note four things, and nothing that identifies the people you served:</p>
@@ -302,6 +404,9 @@
         </div>
       </div>
     </section>
+
+    </div>
+    </div>
 
     <section class="cta-band">
       <div class="wrap">
@@ -322,6 +427,99 @@
     <p class="src">Food safety guidance follows USDA standards. Care-kit and outreach guidance draws on street outreach organizations that do this work daily.</p>
   </footer>
 
+
+  <script src="site.js"></script>
+  <script>
+  // Kit planner: sizes the list in step 2 to the number of people and the weather.
+  (function () {
+    var $ = function (id) { return document.getElementById(id); };
+    var KEY = "dn_kit", st = null;
+    try { st = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+    var mo = new Date().getMonth();
+    if (!st || typeof st !== "object") st = {};
+    st.n = Math.min(500, Math.max(1, parseInt(st.n, 10) || 10));
+    st.w = st.w || (mo >= 10 || mo <= 2 ? "cold" : mo >= 5 && mo <= 8 ? "hot" : "mild");
+    st.done = st.done || {};
+    function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+
+    function items() {
+      var n = st.n, spare = Math.max(2, Math.ceil(n * 0.1)), hot = st.w === "hot", cold = st.w === "cold";
+      var list = [
+        { id: "water", t: "Bottled water", s: hot ? "Two each in the heat, plus spare" : "One each, plus " + spare + " spare", q: (hot ? n * 2 : n) + spare },
+        { id: "food", t: "Meals or ready-to-eat food", s: "One each, plus " + spare + " spare", q: n + spare, u: "portions" },
+        { id: "socks", t: "Socks, thick or wool", s: "The most requested clothing item", q: n, u: "pairs" },
+        { id: "hyg", t: "Hygiene kits", s: "Toothbrush and paste, soap, wipes, lip balm", q: n },
+        { id: "bags", t: "Gallon bags or small packs", s: "One to hold each kit", q: n },
+        { id: "cards", t: "2-1-1 resource cards", s: "Print " + Math.ceil(n / 4) + (Math.ceil(n / 4) === 1 ? " page" : " pages") + ", four cards a page (below)", q: n }
+      ];
+      if (cold) list.push({ id: "warm", t: "Gloves, hats, hand warmers", s: "One set each", q: n }, { id: "poncho", t: "Rain ponchos", s: "One each", q: n });
+      if (hot) list.push({ id: "elec", t: "Electrolyte packets", s: "One each", q: n }, { id: "sun", t: "Sunscreen", s: "To share", q: "a few" });
+      list.push({ id: "you", t: "For you: gloves or tongs, soap or wipes", s: "For handling food safely", q: "1", u: "set" },
+                { id: "cool", t: "Insulated bag or cooler", s: "Hot food hot, cold food cold", q: "1" });
+      return list;
+    }
+
+    function paint() {
+      $("pl-n").value = st.n;
+      document.querySelectorAll(".seg button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.w === st.w ? "true" : "false"); });
+      var ul = $("pl-list"), list = items(); ul.innerHTML = "";
+      list.forEach(function (it) {
+        var li = document.createElement("li"), lab = document.createElement("label");
+        var cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = !!st.done[it.id];
+        var box = document.createElement("span"); box.className = "pl-box";
+        box.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>';
+        var t = document.createElement("span"); t.className = "pl-t"; t.textContent = it.t;
+        var sm = document.createElement("small"); sm.textContent = it.s; t.appendChild(sm);
+        var q = document.createElement("span"); q.className = "pl-q"; q.textContent = it.q;
+        if (it.u) { var u = document.createElement("small"); u.textContent = it.u; q.appendChild(u); }
+        cb.addEventListener("change", function () { if (cb.checked) st.done[it.id] = 1; else delete st.done[it.id]; save(); tally(list); });
+        lab.appendChild(cb); lab.appendChild(box); lab.appendChild(t); lab.appendChild(q); li.appendChild(lab); ul.appendChild(li);
+      });
+      tally(list);
+    }
+    function tally(list) {
+      var done = list.filter(function (it) { return st.done[it.id]; }).length;
+      $("pl-fill").style.width = Math.round(done / list.length * 100) + "%";
+      $("pl-bar").classList.toggle("done", done === list.length);
+      $("pl-count").textContent = done === list.length ? "All packed for " + st.n + ". Go feed someone." : done + " of " + list.length + " packed, for " + st.n + (st.n === 1 ? " person" : " people");
+    }
+    function setN(n) { st.n = Math.min(500, Math.max(1, n || 1)); save(); paint(); }
+    $("pl-minus").addEventListener("click", function () { setN(st.n - (st.n > 20 ? 5 : 1)); });
+    $("pl-plus").addEventListener("click", function () { setN(st.n + (st.n >= 20 ? 5 : 1)); });
+    $("pl-n").addEventListener("change", function () { setN(parseInt(this.value, 10)); });
+    document.querySelectorAll(".seg button").forEach(function (b) { b.addEventListener("click", function () { st.w = b.dataset.w; save(); paint(); }); });
+    $("pl-send").addEventListener("click", async function () {
+      var b = this, text = "Kit list for feeding " + st.n + (st.n === 1 ? " person" : " people") + ":\n" +
+        items().map(function (it) { return "- " + it.t + ": " + it.q + (it.u ? " " + it.u : ""); }).join("\n") +
+        "\n\nThe playbook: https://charity.safjob.com/playbook.html";
+      if (navigator.share) { try { await navigator.share({ title: "Dar Najat kit list", text: text }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+      try { await navigator.clipboard.writeText(text); b.textContent = "List copied"; } catch (e) { b.textContent = "Couldn't copy on this device"; }
+    });
+    $("pl-reset").addEventListener("click", function () { st.done = {}; save(); paint(); });
+    paint();
+  })();
+
+  // Reading progress and the step rail
+  (function () {
+    var bar = document.getElementById("progress"), ticking = false;
+    function upd() {
+      ticking = false;
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.transform = "scaleX(" + (h > 0 ? Math.min(1, window.scrollY / h) : 0) + ")";
+    }
+    window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(upd); } }, { passive: true });
+    upd();
+    var links = document.querySelectorAll(".rail ol a");
+    if (!links.length || !("IntersectionObserver" in window)) return;
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id); });
+      });
+    }, { rootMargin: "-30% 0px -60% 0px" });
+    document.querySelectorAll(".step").forEach(function (sec) { io.observe(sec); });
+  })();
+  </script>
 
   <script>
   (function () {

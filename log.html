@@ -29,10 +29,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="site.css">
+<script>(function (d) { d.classList.add("js"); var t = null; try { t = localStorage.getItem("dn_theme"); if (localStorage.getItem("dn_big") === "1") d.classList.add("big"); } catch (e) {}
+  if (t !== "light" && t !== "dark") t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; d.setAttribute("data-theme", t); })(document.documentElement);</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 
-  .hero { background: var(--navy); color: var(--ivory); padding: 32px 0 56px; text-align: center; }
+  .hero { background: radial-gradient(120% 90% at 50% 0%, var(--navy-soft) 0%, var(--navy) 50%, var(--navy-deep) 100%); color: var(--ivory); padding: 36px 0 56px; text-align: center; }
   .hero .mark { width: 64px; height: 64px; margin-bottom: 18px; }
   .eyebrow { font-family: var(--body); font-size: 12px; letter-spacing: 0.32em; text-transform: uppercase; color: rgba(240,233,220,0.6); margin: 0 0 12px; }
   .hero h1 { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 6vw, 46px); line-height: 1.1; margin: 0 0 16px; }
@@ -41,36 +43,38 @@
   main { padding: 44px 0 0; }
 
   /* Banner */
-  .banner { border-radius: 3px; padding: 14px 18px; font-size: 15px; margin-bottom: 26px; }
+  .banner { border-radius: 14px; padding: 14px 18px; font-size: 15px; margin-bottom: 26px; }
   .banner.demo { background: #FBEFD6; border: 1px solid #E3C583; color: #6B4E1E; }
   .banner.ok { background: #E2EFE4; border: 1px solid #9FC6A6; color: #22375E; }
   .banner.err { background: #F5E0D8; border: 1px solid #D5A48E; color: #7A3A24; }
   .banner.hide { display: none; }
 
   /* Form */
-  .card { background: var(--ivory-deep); border-radius: 4px; padding: 28px; }
-  .card h2 { font-family: var(--display); font-weight: 700; font-size: 24px; color: var(--navy); margin: 0 0 4px; }
-  .card .sub { font-size: 15px; color: rgba(36,31,24,0.66); margin: 0 0 24px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 26px; box-shadow: var(--shadow); }
+  @media (max-width: 420px) { .card { padding: 20px; } }
+  .card h2 { font-family: var(--display); font-weight: 700; font-size: 24px; color: var(--heading); margin: 0 0 4px; }
+  .card .sub { font-size: 15px; color: var(--muted); margin: 0 0 24px; }
 
   .field { margin-bottom: 20px; }
-  .field label { display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; color: var(--navy); margin-bottom: 7px; }
-  .field .hint { font-weight: 400; color: rgba(36,31,24,0.5); letter-spacing: 0; }
+  .field label { display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; color: var(--heading); margin-bottom: 7px; }
+  .field .hint { font-weight: 400; color: var(--muted); letter-spacing: 0; }
   input[type="text"], input[type="date"], input[type="number"], select, textarea {
     width: 100%;
     font-family: var(--body);
     font-size: 16px;
     color: var(--ink);
-    background: var(--field);
-    border: 1px solid rgba(36,31,24,0.2);
-    border-radius: 3px;
+    background: var(--input);
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
     padding: 12px 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
   input[type="text"], input[type="date"], input[type="number"], select { height: 48px; line-height: 1.2; }
   textarea { resize: vertical; min-height: 76px; }
   /* iPhone Safari gives date fields their own minimum width and centered text; match the other fields */
   input[type="date"] { -webkit-appearance: none; appearance: none; display: block; min-width: 0; max-width: 100%; min-height: 48px; text-align: left; }
   input[type="date"]::-webkit-date-and-time-value { text-align: left; margin: 0; }
-  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(27,42,74,0.16); }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--heading); box-shadow: 0 0 0 3px var(--focus); }
   select { appearance: auto; }
   select[hidden], input[hidden] { display: none; }
 
@@ -83,16 +87,22 @@
   .checks { display: flex; flex-wrap: wrap; gap: 10px; }
   .check {
     display: inline-flex; align-items: center; gap: 8px;
-    background: var(--field);
-    border: 1px solid rgba(36,31,24,0.2);
+    background: var(--input);
+    border: 1px solid var(--line-strong);
     border-radius: 999px;
-    padding: 9px 16px;
+    padding: 11px 18px;
+    min-height: 46px;
     cursor: pointer;
     font-size: 15px;
+    font-weight: 600;
     user-select: none;
+    transition: transform 0.25s var(--ease), background 0.2s ease, border-color 0.2s ease;
   }
-  .check input { accent-color: var(--navy); width: 16px; height: 16px; }
-  .check.on { border-color: var(--brass); background: #FBEFD6; }
+  .check:active { transform: scale(0.96); }
+  .check:focus-within { outline: 3px solid var(--heading); outline-offset: 2px; }
+  .check input { accent-color: var(--heading); width: 16px; height: 16px; }
+  .check.on { border-color: var(--heading); background: var(--navy); color: var(--gold); transform: scale(1.03); }
+  .check.on input { accent-color: var(--gold); }
 
   /* Honeypot, hidden from people, visible to bots */
   .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
@@ -109,57 +119,72 @@
     border-radius: 999px;
     padding: 16px;
     cursor: pointer;
-    transition: background 0.18s ease;
+    box-shadow: 0 10px 24px rgba(19,30,54,0.22);
+    transition: background 0.18s ease, transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
   }
-  .submit:hover { background: var(--navy-soft); }
-  .submit:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+  .submit:hover { background: var(--navy-soft); transform: translateY(-2px); box-shadow: 0 16px 32px rgba(19,30,54,0.28); }
+  .submit:active { transform: scale(0.985); }
+  .submit:focus-visible { outline: 3px solid var(--heading); outline-offset: 2px; }
   .submit:disabled { opacity: 0.55; cursor: default; }
 
   /* Your feedings (this phone only) */
   .mine { padding: 40px 0 0; }
-  .mine h2 { font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--navy); margin: 0 0 4px; }
+  .mine h2 { font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--heading); margin: 0 0 4px; }
   .mine .sub { font-size: 15px; color: var(--muted); margin: 0 0 14px; }
   .mine-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
   .mine-list li { padding: 12px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; font-size: 16px; }
-  .mine-list .w { font-weight: 700; color: var(--navy); }
+  .mine-list .w { font-weight: 700; color: var(--heading); }
   .mine-list .m { font-size: 14px; color: var(--muted); }
-  .mine-list .d { font-size: 13px; font-weight: 600; color: var(--terra); white-space: nowrap; }
+  .mine-list .d { font-size: 13px; font-weight: 600; color: var(--accent); white-space: nowrap; }
   .mine-note { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
 
   /* Coverage */
   .coverage { padding: 56px 0 0; }
-  .coverage h2 { font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--navy); margin: 0 0 4px; }
-  .coverage .sub { font-size: 15px; color: rgba(36,31,24,0.6); margin: 0 0 22px; }
+  .coverage h2 { font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--heading); margin: 0 0 4px; }
+  .coverage .sub { font-size: 15px; color: var(--muted); margin: 0 0 22px; }
   .cov-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
   .refresh {
     flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px;
-    font-family: var(--body); font-size: 14px; font-weight: 700; color: var(--navy);
-    background: transparent; border: 1px solid rgba(27,42,74,0.3); border-radius: 999px;
+    font-family: var(--body); font-size: 14px; font-weight: 700; color: var(--heading);
+    background: transparent; border: 1px solid var(--line-strong); border-radius: 999px;
     padding: 8px 14px; cursor: pointer;
   }
-  .refresh:hover { border-color: var(--navy); }
-  .refresh:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+  .refresh:hover { border-color: var(--heading); }
+  .refresh:focus-visible { outline: 3px solid var(--heading); outline-offset: 2px; }
   .refresh svg { width: 15px; height: 15px; }
   .refresh.spin svg { animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .updated { font-size: 12px; color: rgba(36,31,24,0.55); margin: -14px 0 18px; }
+  .updated { font-size: 12px; color: var(--muted); margin: -14px 0 18px; }
 
-  .feeding { padding: 20px 0; border-bottom: 1px solid var(--line); }
-  .feeding:first-of-type { border-top: 1px solid var(--line); }
+  .feeding { padding: 20px 22px; margin-bottom: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; animation: rise 0.5s var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } }
+  /* Laptop: the form on the left, the community's log on the right */
+  @media (min-width: 1040px) {
+    .log-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: start; }
+    .log-grid .coverage { padding-top: 0; }
+  }
+  /* The thank-you arrives with a small drawn star */
+  .invite { animation: pop 0.6s var(--ease) both; position: relative; overflow: hidden; }
+  @keyframes pop { from { opacity: 0; transform: translateY(16px) scale(0.97); } }
+  .invite .star { position: absolute; right: 18px; top: 16px; width: 56px; height: 56px; }
+  .invite .star rect { fill: none; stroke: var(--gold); stroke-width: 3; stroke-linejoin: round; stroke-dasharray: 150; stroke-dashoffset: 150; animation: star-draw 1.1s var(--ease) 0.25s forwards; }
+  .invite .star rect + rect { animation-delay: 0.5s; }
+  @keyframes star-draw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) { .feeding, .invite { animation: none; } .invite .star rect { animation: none; stroke-dashoffset: 0; } .check, .submit { transition: none; } }
   .f-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-  .f-where { font-family: var(--display); font-weight: 700; font-size: 20px; color: var(--navy); margin: 0; }
-  .f-date { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; color: var(--terra); white-space: nowrap; }
-  .f-memory { font-size: 14px; color: rgba(36,31,24,0.66); margin: 4px 0 0; }
+  .f-where { font-family: var(--display); font-weight: 700; font-size: 20px; color: var(--heading); margin: 0; }
+  .f-date { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; color: var(--accent); white-space: nowrap; }
+  .f-memory { font-size: 14px; color: var(--muted); margin: 4px 0 0; }
   .f-memory b { color: var(--ink); font-weight: 700; }
   .f-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
-  .tag { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: var(--navy); background: var(--ivory-deep); border-radius: 999px; padding: 4px 12px; }
+  .tag { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--heading); background: var(--card-2); border-radius: 999px; padding: 4px 12px; }
   .f-note { font-family: var(--display); font-style: italic; font-size: 17px; color: var(--ink); margin: 12px 0 0; }
-  .f-count { font-size: 13px; color: rgba(36,31,24,0.55); margin-top: 8px; }
-  .empty { color: rgba(36,31,24,0.55); font-style: italic; padding: 8px 0; }
+  .f-count { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .empty { color: var(--muted); font-style: italic; padding: 8px 0; }
 
   .invite { background: var(--navy); color: var(--ivory); border-radius: 16px; padding: 24px; margin-bottom: 26px; }
   .invite .invite-k { font-size: 12px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin: 0 0 6px; }
-  .invite h2 { font-family: var(--display); font-weight: 700; font-size: 26px; line-height: 1.2; margin: 0 0 8px; color: var(--ivory); }
+  .invite h2 { font-family: var(--display); font-weight: 700; font-size: 26px; line-height: 1.2; margin: 0 0 8px; color: var(--ivory); padding-right: 64px; }
   .invite p { margin: 0; color: var(--on-navy); font-size: 16px; }
   .invite-row { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin-top: 18px; }
   .invite-btn {
@@ -186,9 +211,15 @@
     <div class="wrap">
       <a class="brand" href="./"><img src="mark-small.svg" alt=""><span>DAR NAJAT</span></a>
       <nav class="nav" aria-label="Main">
-        <a href="playbook.html">Playbook</a>
-        <a href="log.html" aria-current="page">Log</a>
+        <a href="./"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg><span>Home</span></a>
+        <a href="playbook.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h10"/></svg><span>Playbook</span></a>
+        <a href="log.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20h14"/><path d="M7 16l9.5-9.5 3 3L10 19H7z"/></svg><span>Log</span></a>
+        <a class="nav-help" href="help.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11h18a9 9 0 0 1-18 0z"/><path d="M9 20.5h6"/><path d="M9.5 3.5c0 1.6 1.2 1.6 1.2 3.2M13.5 3.5c0 1.6 1.2 1.6 1.2 3.2"/></svg><span>Need a meal?</span></a>
       </nav>
+      <button type="button" class="theme-btn" id="theme-btn" aria-label="Switch to dark mode">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.500A8 8 0 0 1 9.500 4a7 7 0 1 0 10.500 10.500z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.500v2M12 19.500v2M2.500 12h2M19.500 12h2M5.300 5.300l1.400 1.400M17.300 17.300l1.400 1.400M5.300 18.700l1.400-1.400M17.300 6.700l1.400-1.400"/></svg>
+      </button>
     </div>
   </div>
 
@@ -202,11 +233,14 @@
   </header>
 
   <main>
-    <div class="wrap">
+    <div class="wrap wide">
+     <div class="log-grid">
+      <div class="col-form">
 
       <div id="banner" class="banner hide"></div>
 
       <div class="invite" id="invite" hidden>
+        <svg class="star" viewBox="0 0 60 60" aria-hidden="true"><rect x="13" y="13" width="34" height="34" rx="2"/><rect x="13" y="13" width="34" height="34" rx="2" transform="rotate(45 30 30)"/></svg>
         <p class="invite-k">Logged. Thank you.</p>
         <h2>Bring someone next time</h2>
         <p>Send the playbook to one person who might come with you next time.</p>
@@ -233,7 +267,7 @@
           </div>
 
           <div class="field">
-            <label for="location_label">Where <span class="hint">— a block, park, or intersection. Keep it rough, never where someone sleeps.</span></label>
+            <label for="location_label">Where <span class="hint">(a block, park, or intersection. Keep it rough, never where someone sleeps.)</span></label>
             <input type="text" id="location_label" name="location_label" maxlength="200" placeholder="e.g. Esther Short Park, east side" required>
           </div>
 
@@ -260,7 +294,7 @@
           </div>
 
           <div class="field">
-            <label>What you gave <span class="hint">— pick at least one</span></label>
+            <label>What you gave <span class="hint">(pick at least one)</span></label>
             <div class="checks" id="checks">
               <label class="check"><input type="checkbox" name="items" value="Meals"> Meals</label>
               <label class="check"><input type="checkbox" name="items" value="Water"> Water</label>
@@ -294,6 +328,8 @@
         <p class="mine-note">Saved only on this phone, so you can look back at what you've given.</p>
       </section>
 
+      </div>
+
       <section class="coverage">
         <div class="cov-head">
           <div>
@@ -308,6 +344,7 @@
         <p class="updated" id="updated" aria-live="polite"></p>
         <div id="list"><p class="empty">Loading…</p></div>
       </section>
+     </div>
 
     </div>
   </main>
@@ -319,6 +356,7 @@
     <p>Meant to be carried by many hands.</p>
   </footer>
 
+  <script src="site.js"></script>
   <script>
   (function () {
     // ---------------------------------------------------------------
@@ -390,6 +428,12 @@
       String(now.getMonth() + 1).padStart(2, "0") + "-" +
       String(now.getDate()).padStart(2, "0");
 
+    // Arriving from a name's page on the home screen: carry the name in.
+    try {
+      var qn = (new URLSearchParams(location.search).get("name") || "").replace(/\s+/g, " ").trim().slice(0, 120);
+      if (qn) document.getElementById("in_memory_of").value = qn;
+    } catch (e) {}
+
     // Checkbox pill styling
     document.getElementById("checks").addEventListener("change", function (e) {
       var label = e.target.closest(".check");
@@ -435,6 +479,7 @@
       rows.forEach(function (r) {
         var card = document.createElement("div");
         card.className = "feeding";
+        card.style.setProperty("--i", Math.min(listEl.children.length, 8));
 
         var top = document.createElement("div");
         top.className = "f-top";
@@ -604,6 +649,7 @@
     function showInvite(p) {
       lastLogged = p || lastLogged;
       invite.hidden = false;
+      invite.style.animation = "none"; void invite.offsetWidth; invite.style.animation = "";
       copyStatus.textContent = "";
       document.getElementById("card-img").hidden = true;
       document.getElementById("card-hint").hidden = true;

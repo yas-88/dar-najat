@@ -65,6 +65,11 @@
   }
   .step { scroll-margin-top: 70px; }
 
+  .asked { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 18px; padding: 20px 22px; margin: 6px 0 22px; }
+  .asked .label { margin-bottom: 4px; }
+  .asked-note { font-size: 13px; color: var(--muted); margin: 14px 0 0; }
+  @media print { .asked { display: none !important; } }
+
   /* Kit planner */
   .planner { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 22px; box-shadow: var(--shadow); margin: 6px 0 26px; }
   .planner .label { margin-bottom: 8px; }
@@ -282,6 +287,12 @@
         <div class="body">
           <p>The needs on the street are consistent: food, water, hygiene, and dry socks. Build around those.</p>
 
+          <div class="asked" id="asked" hidden>
+            <p class="label">Asked for most, last 30 days</p>
+            <div class="tally" id="tally"></div>
+            <p class="asked-note">Tapped by people who need a meal, on the <a href="help.html#ask">Need a meal page</a>. No names, no places.</p>
+          </div>
+
           <div class="planner" id="planner">
             <p class="label">Kit planner</p>
             <h3>How many people are you feeding?</h3>
@@ -429,6 +440,13 @@
 
 
   <script src="site.js"></script>
+  <script src="db.js"></script>
+  <script>
+  // What people who need a meal asked for. Hidden until there is something to show.
+  if (window.DN) window.DN.tally().then(function (rows) {
+    if (window.DN.paintTally(document.getElementById("tally"), rows, "en")) document.getElementById("asked").hidden = false;
+  }).catch(function () {});
+  </script>
   <script>
   // Kit planner: sizes the list in step 2 to the number of people and the weather.
   (function () {

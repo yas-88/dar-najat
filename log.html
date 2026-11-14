@@ -127,6 +127,14 @@
   .submit:focus-visible { outline: 3px solid var(--heading); outline-offset: 2px; }
   .submit:disabled { opacity: 0.55; cursor: default; }
 
+  /* Planning one */
+  .plan { margin-top: 26px; }
+  .plan-status { font-size: 15px; font-weight: 700; color: var(--accent); margin: 14px 0 0; min-height: 1.4em; }
+  .soon-box { padding: 0 0 36px; }
+  .soon-box h2 { font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--heading); margin: 0 0 4px; }
+  .soon-box .sub { font-size: 15px; color: var(--muted); margin: 0 0 16px; }
+  @media (max-width: 1039px) { .soon-box { padding-top: 48px; padding-bottom: 0; } .soon-box + .coverage { padding-top: 40px; } }
+
   /* Your feedings (this phone only) */
   .mine { padding: 40px 0 0; }
   .mine h2 { font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--heading); margin: 0 0 4px; }
@@ -321,6 +329,47 @@
         </form>
       </div>
 
+      <section class="card plan" id="plan">
+        <h2>Planning one?</h2>
+        <p class="sub">Post it so people who need a meal know it is coming, and so someone else can cover a different spot. Pick a public place and keep it rough.</p>
+        <form id="plan-form" novalidate>
+          <div class="row">
+            <div class="field">
+              <label for="p_date">Day</label>
+              <input type="date" id="p_date" name="p_date" required>
+            </div>
+            <div class="field">
+              <label for="p_part">Time of day</label>
+              <select id="p_part" name="p_part">
+                <option value="morning">Morning</option>
+                <option value="midday" selected>Midday</option>
+                <option value="afternoon">Afternoon</option>
+                <option value="evening">Evening</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="p_where">Where <span class="hint">(a park, a block, an intersection. Never where someone sleeps.)</span></label>
+            <input type="text" id="p_where" name="p_where" maxlength="200" placeholder="e.g. Esther Short Park, east side" required>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="p_city">City <span class="hint">(optional)</span></label>
+              <input type="text" id="p_city" name="p_city" maxlength="100" placeholder="Vancouver">
+            </div>
+            <div class="field state">
+              <label for="p_state">State <span class="hint">(optional)</span></label>
+              <select id="p_state" name="p_state"><option value="">Choose a state</option></select>
+            </div>
+          </div>
+          <div class="hp" aria-hidden="true">
+            <label>Leave this blank<input type="text" name="p_site" tabindex="-1" autocomplete="off"></label>
+          </div>
+          <button type="submit" class="submit" id="p_submit">Post this plan</button>
+          <p class="plan-status" id="p_status" aria-live="polite"></p>
+        </form>
+      </section>
+
       <section class="mine" id="mine" hidden>
         <h2>Your feedings</h2>
         <p class="sub" id="mine-sub"></p>
@@ -329,6 +378,13 @@
       </section>
 
       </div>
+
+      <div class="col-list">
+      <section class="soon-box" id="soon-box" hidden>
+        <h2>Coming up</h2>
+        <p class="sub">Feedings people plan to run. They drop off this list the day after.</p>
+        <ul class="plans" id="plans"></ul>
+      </section>
 
       <section class="coverage">
         <div class="cov-head">
@@ -344,6 +400,7 @@
         <p class="updated" id="updated" aria-live="polite"></p>
         <div id="list"><p class="empty">Loading…</p></div>
       </section>
+      </div>
      </div>
 
     </div>
@@ -357,6 +414,7 @@
   </footer>
 
   <script src="site.js"></script>
+  <script src="db.js"></script>
   <script>
   (function () {
     // ---------------------------------------------------------------
@@ -632,7 +690,7 @@
     refreshBtn.addEventListener("click", async function () {
       refreshBtn.classList.add("spin");
       refreshBtn.disabled = true;
-      await loadList();
+      await Promise.all([loadList(), loadPlans()]);
       refreshBtn.classList.remove("spin");
       refreshBtn.disabled = false;
     });
@@ -759,8 +817,45 @@
     }
     paintMine();
 
-    window.darRefresh = loadList;  // pull to refresh reloads the list in place
+    // ---- Planning one: post it, and show what others have planned
+    var planForm = document.getElementById("plan-form"), pStatus = document.getElementById("p_status"), pBtn = document.getElementById("p_submit");
+    (function () {
+      var sel = document.getElementById("p_state");
+      US_STATES.forEach(function (st) { var o = document.createElement("option"); o.value = st[0]; o.textContent = st[1]; sel.appendChild(o); });
+      sel.value = "WA";
+      var d = document.getElementById("p_date"), max = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 60);
+      d.min = window.DN.today();
+      d.max = max.getFullYear() + "-" + String(max.getMonth() + 1).padStart(2, "0") + "-" + String(max.getDate()).padStart(2, "0");
+    })();
+    async function loadPlans() {
+      try {
+        var rows = await window.DN.plans(), box = document.getElementById("soon-box");
+        box.hidden = !rows.length;
+        if (rows.length) window.DN.paintPlans(document.getElementById("plans"), rows, "en");
+      } catch (e) {}
+    }
+    planForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      if (planForm.p_site.value) return;   // honeypot
+      var day = planForm.p_date.value, where = planForm.p_where.value.trim();
+      if (!day || !where) { pStatus.textContent = "A day and a place are needed."; return; }
+      if (day < planForm.p_date.min || day > planForm.p_date.max) { pStatus.textContent = "Pick a day from today to 60 days out."; return; }
+      pBtn.disabled = true; pBtn.textContent = "Posting…";
+      try {
+        await window.DN.post("feeding_plans", [{ plan_date: day, part_of_day: planForm.p_part.value, location_label: where,
+          city: planForm.p_city.value.trim() || null, state: planForm.p_state.value || null, country: "US" }]);
+        pStatus.textContent = "Posted. It shows on the Need a meal page until the day after. Come back and log it once it is done.";
+        planForm.p_where.value = ""; planForm.p_date.value = "";
+        await loadPlans();
+      } catch (err) {
+        pStatus.textContent = "Couldn't post. " + (err.message || "Try again.");
+      }
+      pBtn.disabled = false; pBtn.textContent = "Post this plan";
+    });
+
+    window.darRefresh = function () { return Promise.all([loadList(), loadPlans()]); };  // pull to refresh reloads both lists in place
     loadList();
+    loadPlans();
   })();
   </script>
 

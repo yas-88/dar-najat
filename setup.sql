@@ -72,3 +72,89 @@ alter table public.feedings
   add column if not exists hidden boolean not null default false;
 alter policy "public can read feedings" on public.feedings using (hidden = false);
 alter policy "public can insert feedings" on public.feedings with check (hidden = false);
+
+-- ---------------------------------------------------------------------
+-- 2026-11-14 update: planned feedings and the "What would help most" tally.
+-- Applied to the live database on 14 November 2026 (migration
+-- dar_najat_plans_and_needs). Safe to read as the record of what exists.
+-- To hide a plan or a need, tick "hidden" on its row in the Table Editor.
+-- ---------------------------------------------------------------------
+create table if not exists public.feeding_plans (
+  id             uuid primary key default gen_random_uuid(),
+  created_at     timestamptz not null default now(),
+  plan_date      date not null,
+  part_of_day    text not null check (part_of_day in ('morning','midday','afternoon','evening')),
+  location_label text not null check (char_length(location_label) between 1 and 200),
+  city           text check (city is null or char_length(city) <= 100),
+  state          text check (state is null or char_length(state) <= 100),
+  country        text not null default 'US' check (country ~ '^[A-Z]{2}$'),
+  items          text[] not null default '{}' check (cardinality(items) <= 8 and char_length(array_to_string(items, '')) <= 200),
+  hidden         boolean not null default false
+);
+create index if not exists feeding_plans_date_idx on public.feeding_plans (plan_date);
+alter table public.feeding_plans enable row level security;
+
+-- Plans are visible from the day they are posted until the day after their date.
+create policy "public can read upcoming plans" on public.feeding_plans
+  for select to anon using (hidden = false and plan_date >= current_date - 1);
+create policy "public can post a plan" on public.feeding_plans
+  for insert to anon with check (hidden = false and plan_date >= current_date - 1 and plan_date <= current_date + 60);
+
+grant usage on schema public to anon;
+grant select on public.feeding_plans to anon;
+-- Column-level insert: the public cannot set id, created_at or hidden.
+grant insert (plan_date, part_of_day, location_label, city, state, country, items) on public.feeding_plans to anon;
+
+-- One row per tap on "What would help most". A fixed list, no free text,
+-- and nothing about the person who tapped.
+create table if not exists public.feeding_needs (
+  id         bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  item       text not null check (item in ('hot_meal','water','socks','gloves_hat','blanket','hygiene','poncho','pet_food')),
+  hidden     boolean not null default false
+);
+create index if not exists feeding_needs_created_idx on public.feeding_needs (created_at desc);
+alter table public.feeding_needs enable row level security;
+
+create policy "public can read recent needs" on public.feeding_needs
+  for select to anon using (hidden = false and created_at > now() - interval '60 days');
+create policy "public can add a need" on public.feeding_needs
+  for insert to anon with check (hidden = false);
+
+grant select on public.feeding_needs to anon;
+grant insert (item) on public.feeding_needs to anon;
+
+-- Thirty-day tally, one row per item. Runs with the caller's rights, so the policies above still apply.
+create or replace view public.feeding_needs_tally with (security_invoker = true) as
+  select item, count(*)::int as asks
+  from public.feeding_needs
+  where hidden = false and created_at > now() - interval '30 days'
+  group by item;
+grant select on public.feeding_needs_tally to anon;
+
+-- Flood guards: a burst of junk is refused instead of filling the tables.
+create or replace function public.feeding_needs_guard() returns trigger
+language plpgsql security definer set search_path = '' as $$
+begin
+  if (select count(*) from public.feeding_needs where created_at > now() - interval '10 minutes') >= 90 then
+    raise exception 'Too many requests right now. Try again in a few minutes.';
+  end if;
+  return new;
+end $$;
+create or replace function public.feeding_plans_guard() returns trigger
+language plpgsql security definer set search_path = '' as $$
+begin
+  if (select count(*) from public.feeding_plans where created_at > now() - interval '1 hour') >= 20 then
+    raise exception 'Too many plans posted right now. Try again later.';
+  end if;
+  return new;
+end $$;
+revoke all on function public.feeding_needs_guard() from public, anon, authenticated;
+revoke all on function public.feeding_plans_guard() from public, anon, authenticated;
+
+drop trigger if exists feeding_needs_guard on public.feeding_needs;
+create trigger feeding_needs_guard before insert on public.feeding_needs
+  for each row execute function public.feeding_needs_guard();
+drop trigger if exists feeding_plans_guard on public.feeding_plans;
+create trigger feeding_plans_guard before insert on public.feeding_plans
+  for each row execute function public.feeding_plans_guard();

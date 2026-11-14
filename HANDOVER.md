@@ -96,3 +96,11 @@ Approved by Yassir on 14 November 2026 after a preview in chat.
 - The theme follows the visitor's phone until they tap the switch in the top bar. Their choice, the bigger-text setting, the kit planner ticks and "Your feedings" live only in that browser's storage. Nothing about a visitor is sent to the database.
 - The kit planner amounts in `playbook.html` (one item each, 10 percent spare with a minimum of 2, two waters each in heat) are starting suggestions, not a standard. Change them in the `items()` function.
 - When you add a page or a shared file, add it to the `CORE` list in `sw.js` and bump `VERSION` so it works offline.
+
+### Later the same day: plans, needs, Spanish
+
+- Two new tables in Supabase, both in `setup.sql`: `feeding_plans` (a planned feeding: day, time of day, rough place) and `feeding_needs` (one row per tap on "What would help most", from a fixed list of eight items, no free text). The view `feeding_needs_tally` gives the 30-day totals. Both tables are read and insert only for the public, have a `hidden` checkbox like `feedings`, and refuse bursts (20 plans an hour, 90 needs in 10 minutes).
+- Plans show on the home page, the log page and the Need a meal pages from the day they are posted until the day after their date. Nothing needs clearing by hand.
+- Neither table is in the daily backup: plans expire and the tally is a rolling count.
+- `ayuda.html` is the Spanish Need a meal page. It is generated from the same text as `help.html`; when you change a phone number or hours in one, change the other. `help.js` runs both. The Spanish was written by Claude and should be read once by a fluent speaker.
+- `db.js` is the one place the database address and public key live for the new features. `index.html` and `log.html` still carry their own copy for the feedings log.

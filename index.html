@@ -121,6 +121,10 @@
   .need .v { font-size: 17px; font-weight: 700; line-height: 1.4; }
   .need ul { margin: 6px 0 0; padding-left: 18px; font-size: 15px; font-weight: 600; }
 
+  .soon { margin: 10px 0 0; border-radius: 14px; padding: 14px 18px; display: grid; gap: 2px; text-decoration: none; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--brass); color: var(--ink); }
+  .soon .k { font-size: 12px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+  .soon .v { font-size: 16px; font-weight: 700; line-height: 1.4; }
+  .soon:focus-visible { outline: 3px solid var(--heading); outline-offset: 2px; }
   .days7 { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin: 16px 0 0; }
   .d { animation: rise 0.5s var(--ease) both; animation-delay: calc(var(--i, 0) * 45ms); border-radius: 12px; background: var(--card); border: 1px solid var(--line); padding: 10px 4px; text-align: center; display: grid; gap: 2px; font-variant-numeric: tabular-nums; }
   .d .dn { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--heading); }
@@ -342,6 +346,7 @@
             <span class="k">This week</span>
             <span class="v">Loading the forecast…</span>
           </div>
+          <a class="soon" id="soon" href="help.html#coming" hidden><span class="k">Coming up</span><span class="v" id="soon-v"></span></a>
         </div>
 
         <div class="today-wx">
@@ -460,6 +465,7 @@
   </footer>
 
   <script src="site.js"></script>
+  <script src="db.js"></script>
 
 
   <script>
@@ -768,9 +774,21 @@
       });
     }
 
+    // Planned feedings: one line, shown only when a neighbor has posted one.
+    async function refreshSoon() {
+      try {
+        var rows = await window.DN.plans(), a = $("soon");
+        a.hidden = !rows.length;
+        if (!rows.length) return;
+        var r = rows[0], W = window.DN.WORDS.en;
+        $("soon-v").textContent = (rows.length === 1 ? "1 feeding planned. " : rows.length + " feedings planned. Next: ") +
+          window.DN.dayLabel(r.plan_date, "en") + ", " + W.parts[r.part_of_day] + (r.city ? ", " + r.city : "") + ".";
+      } catch (e) {}
+    }
+
     async function refreshAll(force) {
       paintDate();
-      await Promise.all([refreshWeather(force), refreshCounts()]);
+      await Promise.all([refreshWeather(force), refreshCounts(), refreshSoon()]);
     }
 
     $("t-refresh").addEventListener("click", async function () {
